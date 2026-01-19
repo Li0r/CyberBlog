@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" charset="UTF-8">
+    <style>
+        body{
+            background-color: #44444E;
+            margin: 0;
+        }
+
+        .top-block {
+            width: 100%;
+            height: 70px;
+            background-color: #4C7B8B;
+        }
+
+
+        .Welcome{
+            color: #F9F3EF;
+            position: absolute;
+            font-family: Arial;
+            left:740px;
+            top:10px;
+        }
+
+
+        .Home{
+            transition-duration: 0.4s;
+            border-radius: 0px;
+            font-size:40px;
+            background-color: #4C7B8B;
+            border: 2px solid #4C7B8B;
+            color:#ffffff;
+            font-family: Arial;
+            top:0px;
+            left:0px;
+            position: absolute;
+            padding: 10px 25px;
+        }
+        .Home:hover{
+            border: 2px solid #ffffff;
+            background-color: #ffffff;
+            color: #4C7B8B;
+            cursor:pointer;
+        }
+
+        .About{
+            transition-duration: 0.4s;
+            border-radius: 0px;
+            font-size:40px;
+            background-color: #44444E;
+            border: 2px solid #44444E;
+            color:#ffffff;
+            font-family: Arial;
+            top:0px;
+            left:0px;
+            position: absolute;
+            padding: 10px 25px;
+            left:158px;
+            position: absolute;
+            padding: 10px 25px;
+
+        }
+        .About:hover{
+            border: 2px solid #4C7B8B;
+            background-color: #4C7B8B;
+            color: #44444E;
+            cursor:pointer;
+        }
+
+        .RootLogo{
+            border-radius: 8px;
+            width:75px;
+            right:10px;
+            top:0px;
+            position: absolute;
+        }
+        .about-frame {
+            color: #F9F3EF;
+            font-family: Arial;
+            line-height: 1.5;
+            max-width: 800px;
+            margin: 20px auto;
+            text-align: center;
+        }
+
+
+    </style>
+    <meta charset="UTF-8">
+    <title>RootBlog</title>
+
+</head>
+<body>
+    <div class="top-block">
+        <h1 class="Welcome">Welcome To The Root's Blog</h1>
+        <form action="/home" method="get">
+            <button class="Home">Home</button>
+        </form>
+        <form action="/about" method="get">
+            <button class="About">About</button>
+        </form>
+        <img class="RootLogo" src="/static/images/root_logo.png">
+    </div>
+    <div class="about-frame">
+        <p>Welcome to the Root's blog!</p>
+        <h2>What Is This Blog About?</h2>
+        <p>This blog is about programming, web exploitation, pwn, CTFs solutions and basically cyber related things.</p>
+        <h2>Why I Did It?</h2>
+        <p>
+            Mostly for myself, to push myself forward, to make me learn more and beyond, to understand the best as I can.<br>
+            I want to be able to understand things at the lowest detailes at a level I could explain to others even the most difficult staff out there. <br>
+            There is a saying: <span style="color:#7B9AD1;">"If you can't explain it simply, you don't understand it well enough"</span><br>
+            -Albert Einstein
+            <br>
+            I did it because I was struggling to learn, not because I couldn't find resources to study from, but because I didn't know where to start from.<br>
+        </p>
+        <h2>Who Am I?</h2>
+        <p>I'm Lior, someone who is interested in learning new things, especially related to low-level and vulnerability researching :)</p>
+        <p>
+            <br>Hopefully you will find this Blog useful.<br>
+            GoodLuck,<br>
+            <em>Lior</em>
+        </p>
+
+
+    </body>
+</html>
