@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" charset="UTF-8">
+    <style>
+        body{
+            background-color: #44444E;
+            margin: 0;
+        }
+
+        .top-block {
+            width: 100%;
+            height: 70px;
+            background-color: #4C7B8B;
+            position: fixed;
+            box-sizing: border-box;
+            align-items: center;
+        }
+
+        .Welcome{
+            color: #F9F3EF;
+            position: absolute;
+            font-family: Arial;
+            left:740px;
+            top:10px;
+        }
+
+
+        .Home{
+            transition-duration: 0.4s;
+            border-radius: 0px;
+            font-size:40px;
+            background-color: #44444E;
+            border: 2px solid #44444E;
+            color:#ffffff;
+            font-family: Arial;
+            top:0px;
+            left:0px;
+            position: absolute;
+            padding: 10px 25px;
+        }
+        .Home:hover{
+            border: 2px solid #4C7B8B;
+            background-color: #4C7B8B;
+            color: #44444E;
+            cursor:pointer;
+        }
+
+        .About{
+            transition-duration: 0.4s;
+            border-radius: 0px;
+            font-size:40px;
+            background-color: #4C7B8B;
+            border: 2px solid #4C7B8B;
+            color:#FFFFFF;
+            font-family: Arial;
+            top:0px;
+            left:0px;
+            position: absolute;
+            padding: 10px 25px;
+            left:158px;
+            position: absolute;
+            padding: 10px 25px;
+
+        }
+        .About:hover{
+            border: 2px solid #ffffff;
+            background-color: #ffffff;
+            color: #4C7B8B;
+            cursor:pointer;
+        }
+
+        .RootLogo{
+            border-radius: 8px;
+            width:75px;
+            right:10px;
+            top:0px;
+            position: absolute;
+        }
+
+        .sidebar {
+            width: 220px;
+            background-color: #715A5A;
+            color: #F9F3EF;
+            position: fixed;
+            top: 70px;
+            left: 0;
+            height: 100%;
+            padding: 15px;
+            overflow-y: auto;
+        }
+
+        .sidebar summary {
+            cursor: pointer;
+            font-weight: bold;
+            padding: 5px;
+        }
+
+        .sidebar ul {
+            list-style-type: none;
+            padding-left: 15px;
+        }
+
+        .sidebar ul li a {
+            color: #F9F3EF;
+            text-decoration: none;
+        }
+
+        .sidebar ul li a:hover {
+            text-decoration: underline;
+        }
+
+        .main-content {
+            margin-left: 100px;
+            padding: 90px 20px 20px 240px;
+            color: #F9F3EF;
+        }
+        .code-block {
+            background-color: #1E1E1E;
+            color: #F9F3EF;
+            border: 2px solid #4C7B8B;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+            font-family: monospace;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            max-width: 1100px;
+        }
+
+        .terminal-block {
+            background-color: #0D0D0D;
+            color: #00FF7F;
+            border: 2px solid #4C7B8B;
+            border-radius: 8px;
+            padding: 10px;
+            margin: 15px 0;
+            font-family: monospace;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            max-width: 1100px;
+        }
+
+
+    </style>
+    <title>RootBlog</title>
+
+</head>
+<body>
+
+    <div class="top-block">
+        <h1 class="Welcome">Welcome To The Root's Blog</h1>
+        <form action="/home" method="get">
+            <button class="Home">Home</button>
+        </form>
+        <form action="/about" method="get">
+            <button class="About">About</button>
+        </form>
+        <form action="/verify" method="get">
+            <button class="Verify">Verify</button>
+        </form>
+        <img class="RootLogo" src="/static/images/root_logo.png">
+    </div>
+    <div class="sidebar">
+        <details>
+            <summary>Writeup</summary>
+             <ul>
+                <li><a href="/writeup/pwnable-fd">pwnable - fd</a></li>
+            </ul>
+            <ul>
+                <li><a href="/writeup/picoctf-babygame01">picoctf-babygame01</a></li>
+            </ul>
+        </details>
+    </div>
+
+    <div class="main-content">
+         <h2 style="color:#F9F3EF;">pwnable.kr Challenge: "fd"</h2>
+    <p style="color:#F9F3EF;">This post is about a detailed writeup to challenge in pwnable.kr , the challenge is "fd".</p>
+        <br>
+    <p style="color:#F9F3EF;"><strong style="color:#7B9AD1;">NOTE:</strong><br>
+    I assume you are familiar with C, so I won't explain C syntax here. But if you do want to learn, I suggest reading <em>“The C Programming Language, 2nd Edition”</em> by Brian W. Kernighan and Dennis M. Ritchie. but rather you choose this book or other resource so don't limit yourself with one resource to study from - there are many other free resources that are excellent if you know how to search for them.</p>
+
+    <p style="color:#F9F3EF;">For this challenge, we get this:</p>
+
+
+    <p style="color:#F9F3EF;">Mommy! what is a file descriptor in Linux?<br>try to play the wargame your self but if you are ABSOLUTE beginner, follow this tutorial link:: <a href="https://youtu.be/971eZhMHQQw" target="_blank" style="color:#4C7B8B;">YouTube Walkthrough of fd</a></p>
+
+    <p style="color:#F9F3EF;">Connect via SSH:</p>
+    <div class="terminal-block">
+<code>ssh fd@pwnable.kr -p2222</code><br>
+<code>password: guest</code>
+    </div>
+        <br>
+
+    <h3 style="color:#F9F3EF;">What is a file descriptor in Linux?</h3>
+    <p style="color:#F9F3EF;">A file descriptor is an integer handle that a process uses to access files and sockets or other I/O resources. FD isn't the file itself, but a number the OS uses to keep track of which open file or resource the process is dealing with</p>
+
+    <p style="color:#F9F3EF;">By default, each process starts with three standard FDs:</p>
+    <ul style="color:#F9F3EF;">
+        <li>0 - <strong>stdin</strong> (input) – what the user types from keyboard</li>
+        <li>1 - <strong>stdout</strong> (output) – output on the screen</li>
+        <li>2 - <strong>stderr</strong> (error messages) – where error messages go</li>
+    </ul>
+
+    <p style="color:#F9F3EF;">When you call <code>open()</code> (a system call), the kernel returns the next available FD or -1 in case of an error. We can also use <code>read()</code> to get data or <code>write()</code> to send data.</p>
+
+    <p style="color:#F9F3EF;">Example C definition of <code>read</code>:</p>
+    <div class="code-block">
+<pre>
+<span style="color:#FF9E4A;">ssize_t</span> <span style="color:#A351D1;">read</span>(<span style="color:#FF9E4A;">int</span> fd, <span style="color:#FF9E4A;">const void</span> <span style="color:#F85828;">*</span>buf, <span style="color:#FF9E4A;">size_t</span> count);
+</pre>
+    </div>
+    <ul style="color:#F9F3EF;">
+        <li>fd : the file descriptor to read from (we can put 0 for stdin to read from user's input).</li>
+        <li>buf: the buffer to where the data will go.</li>
+        <li>count: number of bytes to read. Note: don't put a larger number then what the buffer can hold to avoid buffer overflow.</li>
+    </ul>
+    <p style="color:#F9F3EF;">This allows interaction with files/resources without worrying about memory addresses.</p>
+
+    <h3 style="color:#F9F3EF;">Start the Challenge</h3>
+    <p style="color:#F9F3EF;">Connect to the SSH server:</p>
+    <div class="terminal-block">
+<pre>
+ssh fd@pwnable.kr -p2222
+password: guest
+</pre>
+    </div>
+
+    <p style="color:#F9F3EF;">Check available files:</p>
+    <div class="terminal-block">
+<pre>
+fd@ubuntu:~$ ls
+fd  fd.c  flag
+</pre>
+    </div>
+
+    <p style="color:#F9F3EF;">View the <code>fd.c</code> program:</p>
+    <div class="code-block">
+<pre>
+<span style="color:#4DA6FF;">#include</span> <span style="color:#A351D1;">&lt;</span><span style="color:#00FF7F;">stdio.h</span><span style="color:#A351D1;">&gt;</span>
+<span style="color:#4DA6FF;">#include</span> <span style="color:#A351D1;">&lt;</span><span style="color:#00FF7F;">stdlib.h</span><span style="color:#A351D1;">&gt;</span>
+<span style="color:#4DA6FF;">#include</span> <span style="color:#A351D1;">&lt;</span><span style="color:#00FF7F;">string.h</span><span style="color:#A351D1;">&gt;</span>
+
+<span style="color:#FF9E4A;">char</span> buf[<span style="color:#FF9E4A;">32</span>];
+<span style="color:#FF9E4A;">int</span> <span style="color:#A351D1;">main</span>(<span style="color:#FF9E4A;">int</span> argc, <span style="color:#FF9E4A;">char</span><span style="color:#F85828;">*</span> argv[], <span style="color:#FF9E4A;">char</span><span style="color:#F85828;">*</span> envp[]){
+    <span style="color:#4DA6FF;">if</span>(argc <span style="color:#F85828;">&lt;</span> <span style="color:#FF9E4A;">2</span>){
+        <span style="color:#E2342D;">printf</span>(<span style="color:#00FF7F;">"pass argv[1] a number\n"</span>);
+        <span style="color:#4DA6FF;">return</span> <span style="color:#FF9E4A;">0</span>;
+    }
+    <span style="color:#FF9E4A;">int</span> fd <span style="color:#F85828;">=</span> <span style="color:#E2342D;">atoi</span>(argv[<span style="color:#FF9E4A;">1</span>]) <span style="color:#F85828;">-</span> <span style="color:#FF9E4A;">0x1234</span>;
+    <span style="color:#FF9E4A;">int</span> len <span style="color:#F85828;">=</span> <span style="color:#FF9E4A;">0</span>;
+    len <span style="color:#F85828;">=</span> <span style="color:#E2342D;">read</span>(fd, buf, <span style="color:#FF9E4A;">32</span>);
+    <span style="color:#4DA6FF;">if</span>(<span style="color:#F85828;">!</span><span style="color:#E2342D;">strcmp</span>(<span style="color:#00FF7F;">"LETMEWIN\n"</span>, buf)){
+        <span style="color:#E2342D;">printf</span>(<span style="color:#00FF7F;">"good job :)\n"</span>);
+        <span style="color:#E2342D;">setregid</span>(<span style="color:#E2342D;">getegid</span>(), <span style="color:#E2342D;">getegid</span>());
+        <span style="color:#E2342D;">system</span>(<span style="color:#00FF7F;">"/bin/cat flag"</span>);
+        <span style="color:#E2342D;">exit</span>(<span style="color:#FF9E4A;">0</span>);
+    }
+    <span style="color:#E2342D;">printf</span>(<span style="color:#00FF7F;">"learn about Linux file IO\n"</span>);
+    <span style="color:#4DA6FF;">return</span> <span style="color:#FF9E4A;">0</span>;
+}
+</pre>
+    </div>
+
+    <p style="color:#F9F3EF;">Explanation:</p>
+    <ul style="color:#F9F3EF;">
+        <li>The program takes a parameter as FD, subtracts <code>0x1234</code> (4660 in decimal).</li>
+        <li>It reads 32 bytes from that FD into <code>buf</code>.</li>
+        <li>If <code>buf</code> matches <code>"LETMEWIN\n"</code>, it prints the flag.</li>
+    </ul>
+
+    <p style="color:#F9F3EF;">We need <code>fd=0</code> for stdin. Since input is subtracted by 4660, then we will input it to the program, and then we can enter the string "LETMEWIN":</p>
+    <div class="terminal-block">
+<pre>
+./fd 4660
+LETMEWIN
+good job :)
+Mama! Now_I_understand_what_file_descriptors_are!
+</pre>
+    </div>
+
+    <p style="color:#F9F3EF;">And there we have the flag!</p>
+    <p style="color:#05FF7F;">Mama! Now_I_understand_what_file_descriptors_are!</p>
+
+    </div>
+
+
+</body>
+</html>
