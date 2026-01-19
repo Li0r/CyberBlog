@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" charset="UTF-8">
+    <style>
+        body{
+            background-color: #44444E;
+            margin: 0;
+        }
+
+        .top-block {
+            width: 100%;
+            height: 70px;
+            background-color: #4C7B8B;
+            position: fixed;
+        }
+
+        .Welcome{
+            color: #F9F3EF;
+            position: absolute;
+            font-family: Arial;
+            left:740px;
+            top:10px;
+        }
+
+
+        .Home{
+            transition-duration: 0.4s;
+            border-radius: 0px;
+            font-size:40px;
+            background-color: #44444E;
+            border: 2px solid #44444E;
+            color:#ffffff;
+            font-family: Arial;
+            top:0px;
+            left:0px;
+            position: absolute;
+            padding: 10px 25px;
+        }
+        .Home:hover{
+            border: 2px solid #4C7B8B;
+            background-color: #4C7B8B;
+            color: #44444E;
+            cursor:pointer;
+        }
+
+        .About{
+            transition-duration: 0.4s;
+            border-radius: 0px;
+            font-size:40px;
+            background-color: #4C7B8B;
+            border: 2px solid #4C7B8B;
+            color:#FFFFFF;
+            font-family: Arial;
+            top:0px;
+            left:0px;
+            position: absolute;
+            padding: 10px 25px;
+            left:158px;
+            position: absolute;
+            padding: 10px 25px;
+
+        }
+        .About:hover{
+            border: 2px solid #ffffff;
+            background-color: #ffffff;
+            color: #4C7B8B;
+            cursor:pointer;
+        }
+
+        .RootLogo{
+            border-radius: 8px;
+            width:75px;
+            right:10px;
+            top:0px;
+            position: absolute;
+        }
+
+        .sidebar {
+            width: 220px;
+            background-color: #715A5A;
+            color: #F9F3EF;
+            position: fixed;
+            top: 70px;
+            left: 0;
+            height: 100%;
+            padding: 15px;
+            overflow-y: auto;
+        }
+
+        .sidebar summary {
+            cursor: pointer;
+            font-weight: bold;
+            padding: 5px;
+        }
+
+        .sidebar ul {
+            list-style-type: none;
+            padding-left: 15px;
+        }
+
+        .sidebar ul li a {
+            color: #F9F3EF;
+            text-decoration: none;
+        }
+
+        .sidebar ul li a:hover {
+            text-decoration: underline;
+        }
+
+        .main-content {
+            margin-left: 100px;
+            padding: 90px 20px 20px 240px;
+            font-family: monospace;
+            color: #00FF7F;
+            font-size: 32px;
+        }
+
+        .dots::after {
+            content: "";
+            display: inline-block;
+            width: 1em;
+            text-align: left;
+            animation: dots 5s steps(3, end) infinite;
+        }
+
+        @keyframes dots {
+            0% { content: ""; }
+            16% { content: "."; }
+            32% { content: ".."; }
+            48% { content: "..."; }
+            64% { content: ".."; }
+            80% { content: "."; }
+            100% { content: ""; }
+        }
+
+
+    </style>
+    <title>RootBlog</title>
+
+</head>
+<body>
+
+    <div class="top-block">
+        <h1 class="Welcome">Welcome To The Root's Blog</h1>
+        <form action="/home" method="get">
+            <button class="Home">Home</button>
+        </form>
+        <form action="/about" method="get">
+            <button class="About">About</button>
+        </form>
+        <img class="RootLogo" src="/static/images/root_logo.png">
+    </div>
+    <div class="sidebar">
+        <details>
+            <summary>Writeup</summary>
+             <ul>
+                <li><a href="/writeup/pwnable-fd">pwnable - fd</a></li>
+            </ul>
+            <ul>
+                <li><a href="/writeup/picoctf-babygame01">picoctf-babygame01</a></li>
+            </ul>
+        </details>
+
+    </div>
+    <div class="main-content">
+        <h2>Welcome<span class="dots"></span></h2>
+    </div>
+
+</body>
+</html>
