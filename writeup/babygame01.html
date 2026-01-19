@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" charset="UTF-8">
+    <style>
+        body{
+            background-color: #44444E;
+            margin: 0;
+
+        }
+
+        .top-block {
+            width: 100%;
+            height: 70px;
+            background-color: #4C7B8B;
+            position: fixed;
+            box-sizing: border-box;
+            align-items: center;
+        }
+
+        .Welcome{
+            color: #F9F3EF;
+            position: absolute;
+            font-family: Arial;
+            left:740px;
+            top:10px;
+        }
+
+        .Home{
+            transition-duration: 0.4s;
+            border-radius: 0px;
+            font-size:40px;
+            background-color: #44444E;
+            border: 2px solid #44444E;
+            color:#ffffff;
+            font-family: Arial;
+            top:0px;
+            left:0px;
+            position: absolute;
+            padding: 10px 25px;
+        }
+        .Home:hover{
+            border: 2px solid #4C7B8B;
+            background-color: #4C7B8B;
+            color: #44444E;
+            cursor:pointer;
+        }
+
+        .About{
+            transition-duration: 0.4s;
+            border-radius: 0px;
+            font-size:40px;
+            background-color: #4C7B8B;
+            border: 2px solid #4C7B8B;
+            color:#FFFFFF;
+            font-family: Arial;
+            top:0px;
+            left:0px;
+            position: absolute;
+            padding: 10px 25px;
+            left:158px;
+        }
+        .About:hover{
+            border: 2px solid #ffffff;
+            background-color: #ffffff;
+            color: #4C7B8B;
+            cursor:pointer;
+        }
+
+        .RootLogo{
+            border-radius: 8px;
+            width:75px;
+            right:10px;
+            top:0px;
+            position: absolute;
+        }
+
+        .sidebar {
+            width: 220px;
+            background-color: #715A5A;
+            color: #F9F3EF;
+            position: fixed;
+            top: 70px;
+            left: 0;
+            height: 100%;
+            padding: 15px;
+            overflow-y: auto;
+        }
+
+        .sidebar summary {
+            cursor: pointer;
+            font-weight: bold;
+            padding: 5px;
+        }
+
+        .sidebar ul {
+            list-style-type: none;
+            padding-left: 15px;
+        }
+
+        .sidebar ul li a {
+            color: #F9F3EF;
+            text-decoration: none;
+        }
+
+        .sidebar ul li a:hover {
+            text-decoration: underline;
+        }
+
+        .main-content {
+            margin-left: 100px;
+            padding: 90px 20px 20px 240px;
+            color: #F9F3EF;
+
+        }
+
+        h2 {
+            margin-top: 0;
+        }
+
+        .code-block {
+            background-color: #1E1E1E;
+            color: #F9F3EF;
+            border: 2px solid #4C7B8B;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+            font-family: monospace;
+            overflow-x: auto;
+            white-space: pre;
+            font-size: 14px;
+            max-width: 1100px;
+
+        }
+
+        .terminal-block {
+            background-color: #0D0D0D;
+            color: #00FF7F;
+            border: 2px solid #4C7B8B;
+            border-radius: 8px;
+            padding: 10px;
+            margin: 15px 0;
+            font-family: monospace;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            font-size: 14px;
+            max-width: 1100px;
+        }
+
+        code.inline {
+            background: #2a2a2a;
+            color: #8BE38B;
+            padding: 2px 4px;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+
+        .small {
+            font-size: 13px;
+            color: #D6D6D6;
+        }
+
+    </style>
+    <title>RootBlog</title>
+</head>
+<body>
+
+    <div class="top-block">
+        <h1 class="Welcome">Welcome To The Root's Blog</h1>
+        <form action="/home" method="get">
+            <button class="Home">Home</button>
+        </form>
+        <form action="/about" method="get">
+            <button class="About">About</button>
+        </form>
+        <img class="RootLogo" src="/static/images/root_logo.png" alt="logo">
+    </div>
+
+    <div class="sidebar">
+
+        <details>
+            <summary>Writeup</summary>
+            <ul>
+                <li><a href="/writeup/pwnable-fd">pwnable - fd</a></li>
+            </ul>
+            <ul>
+                <li><a href="/writeup/picoctf-babygame01">picoctf-babygame01</a></li>
+            </ul>
+        </details>
+
+    </div>
+
+    <div class="main-content">
+        <h2 style="color:#F9F3EF;">picoCTF Challenge - babygame01</h2>
+
+
+<p style="color:#F9F3EF;"><strong style="color:#7B9AD1;">Description of the challenge:</strong><br>
+Get the flag and reach the exit.<br>
+
+Additional details will be available after launching your challenge instance.<br><br>
+
+In this challange, We get a binary only ,so to see the C code we will use a decompiler, in this case Ghidra.
+
+After downlaoding the binary we try to understand first the main content of the game, what it does, hot to play/how to win, etc...
+
+When we first run the game:
+
+
+        <div class="terminal-block">
+$ ./game
+Player position: 4 4
+End tile position: 29 89
+Player has flag: 0
+..........................................................................................
+..........................................................................................
+..........................................................................................
+..........................................................................................
+....@.....................................................................................
+..........................................................................................
+..........................................................................................
+..........................................................................................
+..........................................................................................
+..........................................................................................
+..........................................................................................
+..........................................................................................
+..........................................................................................
+..........................................................................................
+..........................................................................................
+..........................................................................................
+..........................................................................................
+..........................................................................................
+..........................................................................................
+..........................................................................................
+..........................................................................................
+..........................................................................................
+..........................................................................................
+..........................................................................................
+..........................................................................................
+..........................................................................................
+..........................................................................................
+..........................................................................................
+..........................................................................................
+.........................................................................................X
+        </div>
+
+        <p>
+We notice always same postion of the Flag (X) and us (@).<br>
+We can move by typing w a s d, by typing them singularly or if we want to step for example 3 steps to the right then: 'ddd'.<br>
+
+Lets put the binary to ghidra so we can understand the code:<br>
+Main:</p>
+
+        <div class="code-block">
+<span style="color:#FF9E4A;">undefined4</span> <span style="color:#A351D1;">main</span>(<span style="color:#FF9E4A;">void</span>) {
+
+  <span style="color:#FF9E4A;">int</span> User_Input;
+  <span style="color:#FF9E4A;">undefined4</span> return_value;
+  <span style="color:#FF9E4A;">int</span> in_GS_OFFSET;
+  <span style="color:#FF9E4A;">int</span> Y_POSTION;
+  <span style="color:#FF9E4A;">int</span> X_POSTION;
+  <span style="color:#FF9E4A;">char</span> WINVAR;
+  <span style="color:#FF9E4A;">undefined1</span> Map_Buffer[<span style="color:#FF9E4A;">2700</span>];
+  <span style="color:#FF9E4A;">int</span> canary_check;
+  <span style="color:#FF9E4A;">undefined1</span> <span style="color:#F85828;">*</span>local_10;
+
+  local_10 <span style="color:#F85828;">=</span> <span style="color:#F85828;">&</span>stack0x00000004;
+  canary_check <span style="color:#F85828;">=</span> <span style="color:#F85828;">*</span>(<span style="color:#FF9E4A;">int</span> <span style="color:#F85828;">*</span>)(in_GS_OFFSET <span style="color:#F85828;">+</span> <span style="color:#FF9E4A;">0x14</span>);
+  <span style="color:#E2342D;">init_player</span>(<span style="color:#F85828;">&</span>Y_POSTION);
+  <span style="color:#E2342D;">init_map</span>(Map_Buffer,<span style="color:#F85828;">&</span>Y_POSTION);
+  <span style="color:#E2342D;">print_map</span>(Map_Buffer,<span style="color:#F85828;">&</span>Y_POSTION);
+  <span style="color:#E2342D;">signal</span>(<span style="color:#FF9E4A;">2</span>,sigint_handler);
+  <span style="color:#4DA6FF;">do</span> {
+    <span style="color:#4DA6FF;">do</span> {
+      User_Input <span style="color:#F85828;">=</span> <span style="color:#E2342D;">getchar</span>();
+      <span style="color:#E2342D;">move_player</span>(<span style="color:#F85828;">&</span>Y_POSTION,(<span style="color:#FF9E4A;">int</span>)(<span style="color:#FF9E4A;">char</span>)User_Input,Map_Buffer);
+      <span style="color:#E2342D;">print_map</span>(Map_Buffer,<span style="color:#F85828;">&</span>Y_POSTION);
+    } <span style="color:#4DA6FF;">while</span> (Y_POSTION <span style="color:#F85828;">!=</span> <span style="color:#FF9E4A;">29</span>);
+  } <span style="color:#4DA6FF;">while</span> (X_POSTION <span style="color:#F85828;">!=</span> <span style="color:#FF9E4A;">89</span>);
+  <span style="color:#E2342D;">puts</span>(<span style="color:#00FF7F;">"You win!"</span>);
+  <span style="color:#4DA6FF;">if</span> (WINVAR <span style="color:#F85828;">!=</span> <span style="color:#00FF7F;">'\0'</span>) {
+    <span style="color:#E2342D;">puts</span>(<span style="color:#00FF7F;">"flage"</span>);
+    <span style="color:#E2342D;">win</span>();
+    <span style="color:#E2342D;">fflush</span>(<span style="color:#4DA6FF;">_stdout</span>);
+  }
+  return_value <span style="color:#F85828;">=</span> <span style="color:#FF9E4A;">0</span>;
+  <span style="color:#4DA6FF;">if</span> (canary_check <span style="color:#F85828;">!=</span> <span style="color:#F85828;">*</span>(<span style="color:#FF9E4A;">int</span> <span style="color:#F85828;">*</span>)(in_GS_OFFSET <span style="color:#F85828;">+</span> <span style="color:#FF9E4A;">0x14</span>)) {
+    return_value <span style="color:#F85828;">=</span> <span style="color:#E2342D;">__stack_chk_fail_local</span>();
+  }
+  <span style="color:#4DA6FF;">return</span> return_value;
+}
+        </div>
+
+        <p>
+We can see the main functionality of the program.
+We also know when we try to move to X and get there it types out "You win!" and the program exits but know we see theres more to get the flag.
+<div class="code-block" style="white-space: pre-wrap; font-family: monospace;">
+  <span style="color:#4DA6FF;">if</span> (WINVAR <span style="color:#F85828;">!=</span> <span style="color:#00FF7F;">'\0'</span>) {
+    <span style="color:#E2342D;">puts</span>(<span style="color:#00FF7F;">"flage"</span>);
+    <span style="color:#E2342D;">win</span>();
+    <span style="color:#E2342D;">fflush</span>(<span style="color:#4DA6FF;">_stdout</span>);
+  }
+    </div>
+So we need to somehow make the WINVAR be another value other then '\0' to get the flag.
+
+Lets dive in to print_map() function:
+
+inside theres an intresting function call:
+
+print_flag_status(Y_Postion);
+
+Lets dive deeper to this function:</p>
+
+        <div class="code-block">
+
+<span style="color:#FF9E4A;">void</span> <span style="color:#A351D1;">print_flag_status</span>(<span style="color:#FF9E4A;">int</span> Y_Position) {
+  <span style="color:#E2342D;">printf</span>(<span style="color:#00FF7F;">"Player has flag:</span> <span style="color:#A351D1;">%d\n</span>,(<span style="color:#FF9E4A;">uint</span>)<span style="color:#F85828;">*</span>(<span style="color:#FF9E4A;">byte</span> <span style="color:#F85828;">*</span>)(Y_Position <span style="color:#F85828;">+</span> 8));
+  <span style="color:#4DA6FF;">return</span>;
+}
+        </div>
+
+<p>so the whole game we get player hsa flag: 0 - why?<br>
+becuase Y_Postion being passed as an adress of Y_Postion to this function...<br>
+so Y_Postion+8 is the WINVAR adress.<br>
+<br>
+So know we need to some how find a way to write to WINVAR.<br>
+<br>
+lets check in gdb where is Map_Buffer beggins and where is WINVAR.<br>
+<span style="color:#FF9E4A;">0xffffc490</span>→ start of Map_Buffer
+<br><span style="color:#FF9E4A;">0xffffc48c</span>→ WIN_VARIABLE (WINVAR)<br>
+<br>
+ok lets keep it for later. We might need it. btw- it means we can overwrite to WINVAR since its lower the the beggining of the Map_Buffer.<br>
+<br>
+Lets try and get to 0,0 postion, it means we will get the the adress of 0xffffc490, now what will heppen if we get out of boundries? lets try to go left 4 times - each time for a byte<br>
+to overwrite eventually the WINVAR - why? since this function:</p>
+
+        <div class="code-block">
+<span style="color:#FF9E4A;">void</span> <span style="color:#A351D1;">move_player</span>(<span style="color:#FF9E4A;">int</span> <span style="color:#F85828;">*</span>Y_Position,<span style="color:#FF9E4A;">char</span> User_Input,<span style="color:#FF9E4A;">int</span> Map_Buffer) {
+  <span style="color:#FF9E4A;">int</span> iVar1;
+
+  <span style="color:#4DA6FF;">if</span> (User_Input <span style="color:#F85828;">==</span> <span style="color:#00FF7F;">'l'</span>) {
+    iVar1 <span style="color:#F85828;">=</span> <span style="color:#E2342D;">getchar</span>();
+    player_tile <span style="color:#F85828;">=</span> (<span style="color:#FF9E4A;">undefined1</span>)iVar1;
+  }
+  <span style="color:#4DA6FF;">if</span> (User_Input <span style="color:#F85828;">==</span> <span style="color:#00FF7F;">'p'</span>) {
+    <span style="color:#E2342D;">solve_round</span>(Map_Buffer,Y_Position);
+  }
+  <span style="color:#F85828;">*</span>(<span style="color:#FF9E4A;">undefined1</span> <span style="color:#F85828;">*</span>)(<span style="color:#F85828;">*</span>Y_Position <span style="color:#F85828;">*</span> <span style="color:#FF9E4A;">90</span> <span style="color:#F85828;">+</span> Map_Buffer <span style="color:#F85828;">+</span> Y_Position[<span style="color:#FF9E4A;">1</span>]) <span style="color:#F85828;">=</span> <span style="color:#FF9E4A;">46</span>;
+  <span style="color:#4DA6FF;">if</span> (User_Input <span style="color:#F85828;">==</span> <span style="color:#00FF7F;">'w'</span>) {
+    <span style="color:#F85828;">*</span>Y_Position <span style="color:#F85828;">=</span> <span style="color:#F85828;">*</span>Y_Position <span style="color:#F85828;">+</span> <span style="color:#FF9E4A;">-1</span>;
+  }
+  <span style="color:#4DA6FF;">else if</span> (User_Input <span style="color:#F85828;">==</span> <span style="color:#00FF7F;">'s'</span>) {
+    <span style="color:#F85828;">*</span>Y_Position <span style="color:#F85828;">=</span> <span style="color:#F85828;">*</span>Y_Position <span style="color:#F85828;">+</span> <span style="color:#FF9E4A;">1</span>;
+  }
+  <span style="color:#4DA6FF;">else if</span> (User_Input <span style="color:#F85828;">==</span> <span style="color:#00FF7F;">'a'</span>) {
+    Y_Position[<span style="color:#FF9E4A;">1</span>] <span style="color:#F85828;">=</span> Y_Position[<span style="color:#FF9E4A;">1</span>] <span style="color:#F85828;">+</span> <span style="color:#FF9E4A;">-1</span>;
+  }
+  <span style="color:#4DA6FF;">else if</span> (User_Input <span style="color:#F85828;">==</span> <span style="color:#00FF7F;">'d'</span>) {
+    Y_Position[<span style="color:#FF9E4A;">1</span>] <span style="color:#F85828;">=</span> Y_Position[<span style="color:#FF9E4A;">1</span>] <span style="color:#F85828;">+</span> <span style="color:#FF9E4A;">1</span>;
+  }
+  <span style="color:#F85828;">*</span>(<span style="color:#FF9E4A;">undefined1</span> <span style="color:#F85828;">*</span>)(<span style="color:#F85828;">*</span>Y_Position <span style="color:#F85828;">*</span> <span style="color:#FF9E4A;">0x5a</span> <span style="color:#F85828;">+</span> Map_Buffer <span style="color:#F85828;">+</span> Y_Position[<span style="color:#FF9E4A;">1</span>]) <span style="color:#F85828;">=</span> player_tile;
+  <span style="color:#4DA6FF;">return</span>;
+}
+        </div>
+
+
+If we go to 0,0:<br>
+*(0*0x5a + Map_buffer + 0) = *(Map_Buffer) = palyer_tile <br>It means that in the address of the Map_buffer in the case of 0,0 would be written the player_tile(us - @).<br>
+<br>So if we go 1 left when we are now at 0,0 we get:<br>
+*(0*0x5a + MapBuffer + (-1)) = *(Map_Buffer -1) = palyer_tile<br>
+It means one byte before the address of Map_Buffer, so we get to write to the address of 0xffffc48f.<br>
+Remember this?:<br>
+
+<span style="color:#FF9E4A;">0xffffc490</span>→ start of Map_Buffer
+<br><span style="color:#FF9E4A;">0xffffc48c</span>→ WIN_VARIABLE (WINVAR)<br>
+
+so if we go left 4 time we write the player_tile to the WINVAR, which then we change the value of it.
+But we still need to win the game and get the X...
+  <div class="code-block" style="white-space: pre-wrap; font-family: monospace;">
+  <span style="color:#4DA6FF;">if</span> (User_Input <span style="color:#F85828;">==</span> <span style="color:#00FF7F;">'p'</span>) {
+    <span style="color:#E2342D;">solve_round</span>(Map_Buffer,Y_Position);
+  }
+  </div>
+
+we can just type p to solve the round for us and get the flag.
+        So that means we need to type 'aaaawwww' to get to 0,0 and then 'aaaa' to write the player_tile to WINVAR, then we solve the challange by typing 'p' and that it. And together it will be: <span style="color: #00FF7F;">'aaaawwwwaaaap'</span>.<br><br>
+Lets try!:
+
+        <div class="terminal-block">
+$ ./game
+
+Player position: 4 4
+End tile position: 29 89
+Player has flag: 0
+..........................................................................................
+..........................................................................................
+..........................................................................................
+..........................................................................................
+....@.....................................................................................
+..........................................................................................
+..........................................................................................
+..........................................................................................
+..........................................................................................
+..........................................................................................
+..........................................................................................
+..........................................................................................
+..........................................................................................
+..........................................................................................
+..........................................................................................
+..........................................................................................
+..........................................................................................
+..........................................................................................
+..........................................................................................
+..........................................................................................
+..........................................................................................
+..........................................................................................
+..........................................................................................
+..........................................................................................
+..........................................................................................
+..........................................................................................
+..........................................................................................
+..........................................................................................
+..........................................................................................
+.........................................................................................X
+
+aaaawwww
+
+Player position: 0 0
+End tile position: 29 89
+Player has flag: 0
+
+aaaa
+
+End tile position: 29 89
+Player has flag: 64
+
+p
+
+You win!
+flage
+flag.txt not found in current directory
+        </div>
+
+
+<p> Lets go! Now lets connect to the real machine and do the same to get the actuall flag: <br><br>
+....<br>
+    <br>
+The Flag:
+</p>
+<p style="color:#05FF7F;">
+picoCTF{gamer_m0d3_enabled_ec1f4e25}<br>
+<br>
+</p>
+
+
+
+    </div>
+
+</body>
+</html>
