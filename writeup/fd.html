@@ -2,147 +2,7 @@
 <html lang="en">
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" charset="UTF-8">
-    <style>
-        body{
-            background-color: #44444E;
-            margin: 0;
-        }
-
-        .top-block {
-            width: 100%;
-            height: 70px;
-            background-color: #4C7B8B;
-            position: fixed;
-            box-sizing: border-box;
-            align-items: center;
-        }
-
-        .Welcome{
-            color: #F9F3EF;
-            position: absolute;
-            font-family: Arial;
-            left:740px;
-            top:10px;
-        }
-
-
-        .Home{
-            transition-duration: 0.4s;
-            border-radius: 0px;
-            font-size:40px;
-            background-color: #44444E;
-            border: 2px solid #44444E;
-            color:#ffffff;
-            font-family: Arial;
-            top:0px;
-            left:0px;
-            position: absolute;
-            padding: 10px 25px;
-        }
-        .Home:hover{
-            border: 2px solid #4C7B8B;
-            background-color: #4C7B8B;
-            color: #44444E;
-            cursor:pointer;
-        }
-
-        .About{
-            transition-duration: 0.4s;
-            border-radius: 0px;
-            font-size:40px;
-            background-color: #4C7B8B;
-            border: 2px solid #4C7B8B;
-            color:#FFFFFF;
-            font-family: Arial;
-            top:0px;
-            left:0px;
-            position: absolute;
-            padding: 10px 25px;
-            left:158px;
-            position: absolute;
-            padding: 10px 25px;
-
-        }
-        .About:hover{
-            border: 2px solid #ffffff;
-            background-color: #ffffff;
-            color: #4C7B8B;
-            cursor:pointer;
-        }
-
-        .RootLogo{
-            border-radius: 8px;
-            width:75px;
-            right:10px;
-            top:0px;
-            position: absolute;
-        }
-
-        .sidebar {
-            width: 220px;
-            background-color: #715A5A;
-            color: #F9F3EF;
-            position: fixed;
-            top: 70px;
-            left: 0;
-            height: 100%;
-            padding: 15px;
-            overflow-y: auto;
-        }
-
-        .sidebar summary {
-            cursor: pointer;
-            font-weight: bold;
-            padding: 5px;
-        }
-
-        .sidebar ul {
-            list-style-type: none;
-            padding-left: 15px;
-        }
-
-        .sidebar ul li a {
-            color: #F9F3EF;
-            text-decoration: none;
-        }
-
-        .sidebar ul li a:hover {
-            text-decoration: underline;
-        }
-
-        .main-content {
-            margin-left: 100px;
-            padding: 90px 20px 20px 240px;
-            color: #F9F3EF;
-        }
-        .code-block {
-            background-color: #1E1E1E;
-            color: #F9F3EF;
-            border: 2px solid #4C7B8B;
-            border-radius: 8px;
-            padding: 15px;
-            margin: 15px 0;
-            font-family: monospace;
-            overflow-x: auto;
-            white-space: pre-wrap;
-            max-width: 1100px;
-        }
-
-        .terminal-block {
-            background-color: #0D0D0D;
-            color: #00FF7F;
-            border: 2px solid #4C7B8B;
-            border-radius: 8px;
-            padding: 10px;
-            margin: 15px 0;
-            font-family: monospace;
-            overflow-x: auto;
-            white-space: pre-wrap;
-            max-width: 1100px;
-        }
-
-
-    </style>
+    <link rel="stylesheet" href="../static/style.css">
     <title>RootBlog</title>
 
 </head>
@@ -155,22 +15,33 @@
         <img class="RootLogo" src="/CyberBlog/static/images/root_logo.png">
     </div>
     <div class="sidebar">
-        <details>
-            <summary>Writeup</summary>
-             <ul>
-                <li><a href="fd.html">pwnable - fd</a></li>
-            </ul>
+    <details open>
+        <summary>Writeups</summary>
+        <details class="sub" open>
+            <summary>pwnable.kr</summary>
             <ul>
-                <li><a href="babygame01.html">picoctf-babygame01</a></li>
-            </ul>
-            <ul>
-                <li><a href="horcruxes.html">pwnable - horcruxes</a></li>
+                <li><a href="fd.html" class="current">fd</a></li>
+                <li><a href="horcruxes.html">horcruxes</a></li>
             </ul>
         </details>
-    </div>
+        <details class="sub">
+            <summary>picoCTF</summary>
+            <ul>
+                <li><a href="babygame01.html">babygame01</a></li>
+            </ul>
+        </details>
+        <details class="sub">
+            <summary>ShabakCTF-2021</summary>
+            <ul>
+                <li><a href="babyrisc.html">BabyRISC</a></li>
+            </ul>
+        </details>
+    </details>
+</div>
 
     <div class="main-content">
          <h2 style="color:#F9F3EF;">pwnable.kr Challenge: "fd"</h2>
+	 <p class="post-meta">Published: 08.11.2026</p>
     <p style="color:#F9F3EF;">This post is about a detailed writeup to challenge in pwnable.kr , the challenge is "fd".</p>
         <br>
     <p style="color:#F9F3EF;"><strong style="color:#7B9AD1;">NOTE:</strong><br>
@@ -182,8 +53,7 @@
     <p style="color:#F9F3EF;">Mommy! what is a file descriptor in Linux?<br>try to play the wargame your self but if you are ABSOLUTE beginner, follow this tutorial link:: <a href="https://youtu.be/971eZhMHQQw" target="_blank" style="color:#4C7B8B;">YouTube Walkthrough of fd</a></p>
 
     <p style="color:#F9F3EF;">Connect via SSH:</p>
-    <div class="terminal-block">
-<code>ssh fd@pwnable.kr -p2222</code><br>
+    <div class="terminal-block"><code>ssh fd@pwnable.kr -p2222</code><br>
 <code>password: guest</code>
     </div>
         <br>
@@ -201,8 +71,7 @@
     <p style="color:#F9F3EF;">When you call <code>open()</code> (a system call), the kernel returns the next available FD or -1 in case of an error. We can also use <code>read()</code> to get data or <code>write()</code> to send data.</p>
 
     <p style="color:#F9F3EF;">Example C definition of <code>read</code>:</p>
-    <div class="code-block">
-<pre>
+    <div class="code-block"><pre>
 <span style="color:#FF9E4A;">ssize_t</span> <span style="color:#A351D1;">read</span>(<span style="color:#FF9E4A;">int</span> fd, <span style="color:#FF9E4A;">const void</span> <span style="color:#F85828;">*</span>buf, <span style="color:#FF9E4A;">size_t</span> count);
 </pre>
     </div>
@@ -215,24 +84,21 @@
 
     <h3 style="color:#F9F3EF;">Start the Challenge</h3>
     <p style="color:#F9F3EF;">Connect to the SSH server:</p>
-    <div class="terminal-block">
-<pre>
+    <div class="terminal-block"><pre>
 ssh fd@pwnable.kr -p2222
 password: guest
 </pre>
     </div>
 
     <p style="color:#F9F3EF;">Check available files:</p>
-    <div class="terminal-block">
-<pre>
+    <div class="terminal-block"><pre>
 fd@ubuntu:~$ ls
 fd  fd.c  flag
 </pre>
     </div>
 
     <p style="color:#F9F3EF;">View the <code>fd.c</code> program:</p>
-    <div class="code-block">
-<pre>
+    <div class="code-block"><pre>
 <span style="color:#4DA6FF;">#include</span> <span style="color:#A351D1;">&lt;</span><span style="color:#00FF7F;">stdio.h</span><span style="color:#A351D1;">&gt;</span>
 <span style="color:#4DA6FF;">#include</span> <span style="color:#A351D1;">&lt;</span><span style="color:#00FF7F;">stdlib.h</span><span style="color:#A351D1;">&gt;</span>
 <span style="color:#4DA6FF;">#include</span> <span style="color:#A351D1;">&lt;</span><span style="color:#00FF7F;">string.h</span><span style="color:#A351D1;">&gt;</span>
@@ -266,8 +132,7 @@ fd  fd.c  flag
     </ul>
 
     <p style="color:#F9F3EF;">We need <code>fd=0</code> for stdin. Since input is subtracted by 4660, then we will input it to the program, and then we can enter the string "LETMEWIN":</p>
-    <div class="terminal-block">
-<pre>
+    <div class="terminal-block"><pre>
 ./fd 4660
 LETMEWIN
 good job :)
